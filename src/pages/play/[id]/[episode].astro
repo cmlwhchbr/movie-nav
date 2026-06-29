@@ -33,7 +33,7 @@ const lineStartTimes: Record<number, number> = {
 };
 const startAt = lineStartTimes[source.source_index] || 0;
 const playerUrl = /aosika/i.test(current.player || source.source_code)
-  ? `https://askvodbf.com/play.html?url=${current.url}&start=${startAt}&t=${startAt}`
+  ? `https://askvodbf.com/play.html?url=${current.url}`
   : current.url;
 const related = await relatedCatalogVideos(runtime, vod, 8);
 ---
@@ -105,19 +105,37 @@ const related = await relatedCatalogVideos(runtime, vod, 8);
         const src = video.dataset.src || "";
         const startAt = Number(video.dataset.startAt || 0);
         let didSeek = false;
+        let seekTimer = 0;
+        let recoveryTimer = 0;
 
-        const seekOnce = () => {
-          if (didSeek || !startAt) return;
-          didSeek = true;
-          try {
-            video.currentTime = startAt;
-          } catch {
-            didSeek = false;
+        const recoverIfStalled = () => {
+          if (!didSeek || !startAt) return;
+          if (!video.paused && video.currentTime <= startAt + 0.5) {
+            video.currentTime = 0;
+            video.play().catch(() => {});
           }
         };
 
-        video.addEventListener("loadedmetadata", seekOnce, { once: true });
-        video.addEventListener("canplay", seekOnce, { once: true });
+        const scheduleSeek = () => {
+          if (!startAt || didSeek || seekTimer || video.readyState < 3) return;
+          seekTimer = window.setTimeout(() => {
+            didSeek = true;
+            try {
+              video.currentTime = startAt;
+              recoveryTimer = window.setTimeout(recoverIfStalled, 5000);
+            } catch {
+              didSeek = false;
+            }
+          }, 1200);
+        };
+
+        video.addEventListener("canplay", scheduleSeek);
+        video.addEventListener("playing", scheduleSeek);
+        video.addEventListener("timeupdate", scheduleSeek);
+        video.addEventListener("ended", () => {
+          window.clearTimeout(seekTimer);
+          window.clearTimeout(recoveryTimer);
+        });
 
         if (/\.m3u8(\?|$)/i.test(src) && Hls.isSupported()) {
           const hls = new Hls({
@@ -126,7 +144,6 @@ const related = await relatedCatalogVideos(runtime, vod, 8);
           });
           hls.loadSource(src);
           hls.attachMedia(video);
-          hls.on(Hls.Events.MANIFEST_PARSED, seekOnce);
           hls.on(Hls.Events.ERROR, (_event, data) => {
             if (data.fatal) {
               hls.destroy();

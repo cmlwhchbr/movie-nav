@@ -6,7 +6,10 @@ import { env } from "../lib/env";
 
 const runtime = env(Astro);
 const siteName = runtime.SITE_NAME || "成人视频导航";
-const actresses = await listActresses(runtime, 300);
+const page = Math.max(Number(Astro.url.searchParams.get("page") || 1), 1);
+const limit = 300;
+const offset = (page - 1) * limit;
+const actresses = await listActresses(runtime, { limit, offset, scanLimit: Math.max(12000, (page + 1) * limit * 40) });
 ---
 
 <html lang="zh-CN">
@@ -31,6 +34,10 @@ const actresses = await listActresses(runtime, 300);
             </span>
           </a>
         ))}
+      </div>
+      <div class="mt-7 flex justify-center gap-3">
+        {page > 1 && <a class="pill" href={`/actresses?page=${page - 1}`}>上一页</a>}
+        {actresses.length === limit && <a class="pill" href={`/actresses?page=${page + 1}`}>下一页</a>}
       </div>
     </main>
   </body>

@@ -242,14 +242,21 @@ export async function listCatalogTypes(env: Env): Promise<CatalogType[]> {
   return rows.results || [];
 }
 
-export async function listActresses(env: Env, limit = 80): Promise<ActressItem[]> {
+export async function listActresses(env: Env, options: {
+  limit?: number;
+  offset?: number;
+  scanLimit?: number;
+} = {}): Promise<ActressItem[]> {
+  const limit = Math.min(Math.max(options.limit || 80, 1), 500);
+  const offset = Math.max(options.offset || 0, 0);
+  const scanLimit = Math.min(Math.max(options.scanLimit || 12000, limit + offset), 60000);
   const rows = await env.CATALOG_DB.prepare(`
     SELECT actor, pic
     FROM videos
     WHERE source_key = 'maccms' AND actor IS NOT NULL AND actor != ''
     ORDER BY source_updated_at DESC, id DESC
-    LIMIT 12000
-  `).all<{ actor: string; pic: string }>();
+    LIMIT ?
+  `).bind(scanLimit).all<{ actor: string; pic: string }>();
 
   const map = new Map<string, ActressItem>();
   for (const row of rows.results || []) {
@@ -264,7 +271,7 @@ export async function listActresses(env: Env, limit = 80): Promise<ActressItem[]
     }
   }
 
-  return [...map.values()].sort((a, b) => b.count - a.count).slice(0, limit);
+  return [...map.values()].sort((a, b) => b.count - a.count).slice(offset, offset + limit);
 }
 
 export function catalogDetailUrl(video: Pick<CatalogVideo, "source_vod_id">): string {

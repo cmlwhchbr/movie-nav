@@ -7,9 +7,9 @@ import { env } from "../lib/env";
 const runtime = env(Astro);
 const siteName = runtime.SITE_NAME || "成人视频导航";
 const page = Math.max(Number(Astro.url.searchParams.get("page") || 1), 1);
-const limit = 300;
+const limit = 24;
 const offset = (page - 1) * limit;
-const actresses = await listActresses(runtime, { limit, offset, scanLimit: Math.max(12000, (page + 1) * limit * 40) });
+const actresses = await listActresses(runtime, { limit, offset, scanLimit: Math.max(12000, (page + 1) * limit * 80) });
 ---
 
 <html lang="zh-CN">

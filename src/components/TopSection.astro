@@ -1,5 +1,6 @@
 ---
 const { title, items } = Astro.props;
+const detailHref = (item) => `/detail/${item.vod.id}`;
 ---
 
 <section>
@@ -12,7 +13,7 @@ const { title, items } = Astro.props;
       <article class="card">
         <a
           class="poster-link"
-          href={item.vod ? `/detail/${item.vod.id}` : `/search?q=${encodeURIComponent(item.title)}`}
+          href={detailHref(item)}
           aria-label={`查看${item.title}`}
         >
           <img class="poster" src={item.vod?.pic || item.image || "/favicon.svg"} alt={item.title} loading="lazy" />
@@ -20,7 +21,7 @@ const { title, items } = Astro.props;
         <div>
           <div class="rank">#{index + 1} {item.hotScore}</div>
           <h3>
-            <a href={item.vod ? `/detail/${item.vod.id}` : `/search?q=${encodeURIComponent(item.title)}`}>{item.title}</a>
+            <a href={detailHref(item)}>{item.title}</a>
           </h3>
           <p class="desc">{item.vod?.note || item.desc || "点击搜索站内播放资源"}</p>
         </div>

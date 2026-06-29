@@ -20,8 +20,8 @@ try {
   error = exception instanceof Error ? exception.message : "数据读取失败";
 }
 
-const movieTop = topList.filter((item) => item.category === "movie");
-const teleplayTop = topList.filter((item) => item.category === "teleplay");
+const movieTop = topList.filter((item) => item.category === "movie" && item.vod);
+const teleplayTop = topList.filter((item) => item.category === "teleplay" && item.vod);
 ---
 
 <html lang="zh-CN">

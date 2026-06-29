@@ -22,6 +22,13 @@
       "id": "4e26d3f0168f4aaaa0f5fa3c102572db"
     }
   ],
+  "d1_databases": [
+    {
+      "binding": "CATALOG_DB",
+      "database_name": "movie_nav_catalog",
+      "database_id": "d5bd44ec-8088-4839-bc8a-b5cab1dbda42"
+    }
+  ],
   "triggers": {
     "crons": ["0 2 * * *"]
   },

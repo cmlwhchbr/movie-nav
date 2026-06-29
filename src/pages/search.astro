@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { searchCatalog } from "../lib/catalog";
 import { detailUrl, searchVodAll } from "../lib/maccms";
 import { env } from "../lib/env";
 
@@ -10,7 +11,17 @@ let error = "";
 
 if (q.trim()) {
   try {
-    list = await searchVodAll(runtime, q);
+    const [apiList, catalogList] = await Promise.all([
+      searchVodAll(runtime, q),
+      searchCatalog(runtime, q)
+    ]);
+    const seen = new Set();
+    list = [...apiList, ...catalogList].filter((vod) => {
+      const key = `${vod.source}:${vod.id}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
   } catch (exception) {
     error = exception instanceof Error ? exception.message : "搜索失败";
   }

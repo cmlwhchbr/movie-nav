@@ -25,10 +25,27 @@ export function videoBlocks(xml: string): string[] {
   return [...xml.matchAll(/<video>([\s\S]*?)<\/video>/gi)].map((match) => match[1] || "");
 }
 
+export function listMeta(xml: string): { page: number; pageCount: number; pageSize: number; recordCount: number } {
+  const match = xml.match(/<list\b([^>]*)>/i);
+  const attrs = match?.[1] || "";
+
+  return {
+    page: attrNumber(attrs, "page"),
+    pageCount: attrNumber(attrs, "pagecount"),
+    pageSize: attrNumber(attrs, "pagesize"),
+    recordCount: attrNumber(attrs, "recordcount")
+  };
+}
+
 export function ddBlocks(xml: string): Array<{ flag: string; body: string }> {
   return [...xml.matchAll(/<dd[^>]*flag=["']?([^"'>\s]+)["']?[^>]*>([\s\S]*?)<\/dd>/gi)]
     .map((match) => ({
       flag: match[1] || "url",
       body: cleanXmlText(match[2] || "")
     }));
+}
+
+function attrNumber(attrs: string, name: string): number {
+  const match = attrs.match(new RegExp(`${name}=["']?(\\d+)`, "i"));
+  return Number(match?.[1] || 0);
 }

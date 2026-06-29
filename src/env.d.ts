@@ -11,6 +11,7 @@ interface Env {
   MACCMS_API: string;
   MACCMS_APIS?: string;
   TOP_CACHE: KVNamespace;
+  CATALOG_DB: D1Database;
   TOP_CACHE_KEY: string;
   TOP_CACHE_TTL: string;
 }

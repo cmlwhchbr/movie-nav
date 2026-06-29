@@ -8,10 +8,16 @@ if (!code.includes("movie-nav scheduled refresh")) {
 
 // movie-nav scheduled refresh
 const scheduled = async (event, env, ctx) => {
-  const request = new Request("https://movie.wp-bocai.xyz/api/refresh-top?source=cron", {
+  const refreshRequest = new Request("https://movie.wp-bocai.xyz/api/refresh-top?source=cron", {
     headers: { "user-agent": "movie-nav-cron/1.0" }
   });
-  ctx.waitUntil(__astrojsSsrVirtualEntry.fetch(request, env, ctx));
+  const collectRequest = new Request("https://movie.wp-bocai.xyz/api/collect-aosika?pages=5&source=cron", {
+    headers: { "user-agent": "movie-nav-cron/1.0" }
+  });
+  ctx.waitUntil(Promise.all([
+    __astrojsSsrVirtualEntry.fetch(refreshRequest, env, ctx),
+    __astrojsSsrVirtualEntry.fetch(collectRequest, env, ctx)
+  ]));
 };
 
 export { scheduled };

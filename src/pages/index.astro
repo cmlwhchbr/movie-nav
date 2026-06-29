@@ -13,6 +13,7 @@ let gossip = [];
 let japanKorea = [];
 let hot = [];
 let error = "";
+const hotSearchTerms = ["国产主播", "黑料吃瓜", "91探花", "麻豆", "果冻", "口交", "颜射", "肛交", "深喉"];
 
 try {
   [latest, domestic, gossip, japanKorea, hot] = await Promise.all([
@@ -42,13 +43,20 @@ try {
           <input class="min-w-0 rounded bg-zinc-950 px-4 py-4 text-base text-white outline-none placeholder:text-zinc-500" name="q" placeholder="搜索片名、女优、番号、标签" />
           <button class="rounded bg-rose-600 px-6 py-4 text-base font-bold text-white hover:bg-rose-500">搜索</button>
         </form>
+        <div class="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-2">
+          {hotSearchTerms.map((term) => (
+            <a class="rounded border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300 hover:border-rose-500 hover:text-white" href={`/search?q=${encodeURIComponent(term)}`}>
+              {term}
+            </a>
+          ))}
+        </div>
         {error && <p class="mt-3 text-center text-sm text-red-400">数据读取失败：{error}</p>}
       </section>
 
       <section class="mb-9">
         <div class="mb-3 flex items-end justify-between gap-3">
           <h2 class="text-xl font-bold">最新更新</h2>
-          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/latest">加载更多</a>
+          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/latest">更多</a>
         </div>
         <VideoGrid items={latest} />
       </section>
@@ -56,7 +64,7 @@ try {
       <section class="mb-9">
         <div class="mb-3 flex items-end justify-between gap-3">
           <h2 class="text-xl font-bold">国产</h2>
-          <a class="text-sm text-zinc-400 hover:text-white" href="/category/国产">更多</a>
+          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/国产">更多</a>
         </div>
         <VideoGrid items={domestic} />
       </section>
@@ -64,7 +72,7 @@ try {
       <section class="mb-9">
         <div class="mb-3 flex items-end justify-between gap-3">
           <h2 class="text-xl font-bold">黑料吃瓜</h2>
-          <a class="text-sm text-zinc-400 hover:text-white" href="/tag/黑料">更多</a>
+          <a class="text-sm text-rose-400 hover:text-rose-300" href="/tag/黑料">更多</a>
         </div>
         <VideoGrid items={gossip} />
       </section>
@@ -72,7 +80,7 @@ try {
       <section class="mb-9">
         <div class="mb-3 flex items-end justify-between gap-3">
           <h2 class="text-xl font-bold">日韩</h2>
-          <a class="text-sm text-zinc-400 hover:text-white" href="/category/日韩">更多</a>
+          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/日韩">更多</a>
         </div>
         <VideoGrid items={japanKorea} />
       </section>
@@ -80,7 +88,7 @@ try {
       <section class="mb-9">
         <div class="mb-3 flex items-end justify-between gap-3">
           <h2 class="text-xl font-bold">热门</h2>
-          <a class="text-sm text-zinc-400 hover:text-white" href="/category/hot">更多</a>
+          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/hot">更多</a>
         </div>
         <VideoGrid items={hot} />
       </section>

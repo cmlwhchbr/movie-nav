@@ -11,8 +11,8 @@ const scheduled = async (event, env, ctx) => {
   const refreshRequest = new Request("https://movie.wp-bocai.xyz/api/refresh-top?source=cron", {
     headers: { "user-agent": "movie-nav-cron/1.0" }
   });
-  const collectRequest = new Request("https://movie.wp-bocai.xyz/api/collect-aosika?pages=5&source=cron", {
-    headers: { "user-agent": "movie-nav-cron/1.0" }
+  const collectRequest = new Request("https://movie.wp-bocai.xyz/api/collect-aosika?pages=10&source=cron", {
+    headers: { "user-agent": "movie-nav-cron/1.0", "x-cron": "1" }
   });
   ctx.waitUntil(Promise.all([
     __astrojsSsrVirtualEntry.fetch(refreshRequest, env, ctx),

@@ -10,7 +10,13 @@ const { title, items } = Astro.props;
   <div class="grid">
     {items.map((item, index) => (
       <article class="card">
-        <img class="poster" src={item.vod?.pic || item.image || "/favicon.svg"} alt={item.title} loading="lazy" />
+        <a
+          class="poster-link"
+          href={item.vod ? `/detail/${item.vod.id}` : `/search?q=${encodeURIComponent(item.title)}`}
+          aria-label={`查看${item.title}`}
+        >
+          <img class="poster" src={item.vod?.pic || item.image || "/favicon.svg"} alt={item.title} loading="lazy" />
+        </a>
         <div>
           <div class="rank">#{index + 1} {item.hotScore}</div>
           <h3>

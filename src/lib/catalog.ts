@@ -248,7 +248,7 @@ export async function listActresses(env: Env, limit = 80): Promise<ActressItem[]
     FROM videos
     WHERE source_key = 'maccms' AND actor IS NOT NULL AND actor != ''
     ORDER BY source_updated_at DESC, id DESC
-    LIMIT 1600
+    LIMIT 12000
   `).all<{ actor: string; pic: string }>();
 
   const map = new Map<string, ActressItem>();

@@ -173,14 +173,13 @@ function withFailedLines(url: string, failed: number[]): string {
         const nextLineUrl = video.dataset.nextLineUrl || "";
         let didSeek = false;
         let seekTimer = 0;
-        let lastProgressTime = 0;
-        let lastProgressAt = Date.now();
+        let firstPlayTime = 0;
+        let hasStartedPlayback = false;
         let startupTimer = 0;
-        let stallTimer = 0;
         let didSwitch = false;
 
         const switchToNextLine = (reason: string) => {
-          if (didSwitch || !nextLineUrl) return;
+          if (didSwitch || hasStartedPlayback || !nextLineUrl) return;
           didSwitch = true;
           if (autoSwitchStatus) {
             autoSwitchStatus.textContent = `当前线路${reason}，正在切换下一线路...`;
@@ -189,30 +188,24 @@ function withFailedLines(url: string, failed: number[]): string {
         };
 
         const markProgress = () => {
-          if (video.currentTime > lastProgressTime + 0.5) {
-            lastProgressTime = video.currentTime;
-            lastProgressAt = Date.now();
+          if (video.currentTime > firstPlayTime + 2) {
+            hasStartedPlayback = true;
+            window.clearTimeout(startupTimer);
+            if (autoSwitchStatus) {
+              autoSwitchStatus.textContent = "当前线路正在播放";
+            }
           }
         };
 
         const startHealthCheck = () => {
           window.clearTimeout(startupTimer);
-          window.clearInterval(stallTimer);
-          lastProgressTime = video.currentTime;
-          lastProgressAt = Date.now();
+          firstPlayTime = video.currentTime;
 
           startupTimer = window.setTimeout(() => {
-            if (!video.paused && video.currentTime <= lastProgressTime + 0.5) {
+            if (!hasStartedPlayback && !video.paused && video.currentTime <= firstPlayTime + 0.5) {
               switchToNextLine("加载过慢");
             }
-          }, 15000);
-
-          stallTimer = window.setInterval(() => {
-            if (video.paused || video.ended) return;
-            if (Date.now() - lastProgressAt > 12000) {
-              switchToNextLine("播放卡顿");
-            }
-          }, 4000);
+          }, 20000);
         };
 
         const scheduleSeek = () => {
@@ -247,12 +240,14 @@ function withFailedLines(url: string, failed: number[]): string {
           hls.attachMedia(video);
           hls.on(Hls.Events.ERROR, (_event, data) => {
             if (data.fatal) {
-              hls.destroy();
-              if (nextLineUrl) {
+              if (!hasStartedPlayback && nextLineUrl) {
+                hls.destroy();
                 switchToNextLine("无法播放");
               } else if (fallbackSrc) {
+                hls.destroy();
                 fallbackToParser();
               } else {
+                hls.recoverMediaError();
                 video.src = src;
               }
             }
@@ -272,12 +267,8 @@ function withFailedLines(url: string, failed: number[]): string {
         video.addEventListener("playing", markProgress);
         video.addEventListener("timeupdate", markProgress);
         video.addEventListener("error", () => switchToNextLine("播放失败"));
-        video.addEventListener("waiting", () => {
-          lastProgressAt = Math.min(lastProgressAt, Date.now() - 9000);
-        });
         video.addEventListener("ended", () => {
           window.clearTimeout(startupTimer);
-          window.clearInterval(stallTimer);
         });
 
       }

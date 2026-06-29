@@ -1,0 +1,57 @@
+---
+import "../../../styles/global.css";
+import { getVodDetail, isDirectVideo } from "../../../lib/maccms";
+import { env } from "../../../lib/env";
+
+const runtime = env(Astro);
+const id = Astro.params.id || "";
+const episodeIndex = Number(Astro.params.episode || 0);
+const vod = await getVodDetail(runtime.MACCMS_API, id);
+
+if (!vod) {
+  return new Response("Not Found", { status: 404 });
+}
+
+const current = vod.episodes[episodeIndex];
+if (!current) {
+  return new Response("Not Found", { status: 404 });
+}
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{current.name} - {vod.name} - {runtime.SITE_NAME}</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="page bar">
+        <a class="brand" href="/">{runtime.SITE_NAME}</a>
+        <nav class="nav"><a href="/">首页</a><a href={`/detail/${vod.id}`}>详情</a></nav>
+      </div>
+    </header>
+    <main class="page">
+      <section class="hero">
+        <h1>{vod.name}</h1>
+        <p class="muted">{current.name}</p>
+      </section>
+      <section class="panel">
+        {isDirectVideo(current.url) ? (
+          <video class="player" src={current.url} controls playsinline preload="metadata"></video>
+        ) : (
+          <iframe class="player" src={current.url} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+        )}
+        <p><a href={current.url} target="_blank" rel="nofollow noopener">新窗口打开播放地址</a></p>
+      </section>
+      <section class="panel" style="margin-top: 16px">
+        <h2>播放列表</h2>
+        <div class="episodes">
+          {vod.episodes.map((ep) => (
+            <a href={`/play/${vod.id}/${ep.index}`}>{ep.name}</a>
+          ))}
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

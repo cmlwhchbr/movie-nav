@@ -1,0 +1,82 @@
+---
+import "../styles/global.css";
+import { getCachedTop, topUpdatedAt } from "../lib/top";
+import { listVod } from "../lib/maccms";
+import { env } from "../lib/env";
+import TopSection from "../components/TopSection.astro";
+
+const runtime = env(Astro);
+const siteName = runtime.SITE_NAME || "影视热榜导航";
+let topList = [];
+let latest = [];
+let updatedAt = "";
+let error = "";
+
+try {
+  topList = await getCachedTop(runtime);
+  updatedAt = await topUpdatedAt(runtime);
+  latest = await listVod(runtime.MACCMS_API, 1);
+} catch (exception) {
+  error = exception instanceof Error ? exception.message : "数据读取失败";
+}
+
+const movieTop = topList.filter((item) => item.category === "movie");
+const teleplayTop = topList.filter((item) => item.category === "teleplay");
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{siteName}</title>
+    <meta name="description" content="每日自动同步百度电影、电视剧热榜，聚合 MacCMS 影视资源，支持搜索和在线播放。" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="page bar">
+        <a class="brand" href="/">{siteName}</a>
+        <nav class="nav">
+          <a href="/">首页</a>
+          <a href="/search">搜索</a>
+          <a href="/api/refresh-top">刷新榜单</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <h1>百度热榜影视导航</h1>
+        <p class="muted">电影、电视剧热榜每日缓存，播放数据来自 MacCMS API。</p>
+        <form class="search" action="/search">
+          <input name="q" placeholder="搜索电影、电视剧、演员" />
+          <button>搜索</button>
+        </form>
+        {updatedAt && <p class="muted">榜单更新时间：{updatedAt}</p>}
+        {error && <p style="color: var(--danger)">数据读取失败：{error}</p>}
+      </section>
+
+      <TopSection title="百度电影榜" items={movieTop} />
+      <TopSection title="百度电视剧榜" items={teleplayTop} />
+
+      <section>
+        <div class="section-title">
+          <h2>最新入库</h2>
+          <span class="muted">MacCMS 最新数据</span>
+        </div>
+        <div class="list">
+          {latest.map((vod) => (
+            <article class="row">
+              <img class="poster" src={vod.pic || "/favicon.svg"} alt={vod.name} loading="lazy" />
+              <div>
+                <h3><a href={`/detail/${vod.id}`}>{vod.name}</a></h3>
+                <p class="muted">{vod.type} · {vod.note}</p>
+              </div>
+              <a class="btn" href={`/detail/${vod.id}`}>查看</a>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+    <footer class="page">{siteName}</footer>
+  </body>
+</html>

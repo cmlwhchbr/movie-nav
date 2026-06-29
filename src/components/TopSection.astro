@@ -1,0 +1,24 @@
+---
+const { title, items } = Astro.props;
+---
+
+<section>
+  <div class="section-title">
+    <h2>{title}</h2>
+    <span class="muted">{items.length} 条</span>
+  </div>
+  <div class="grid">
+    {items.map((item, index) => (
+      <article class="card">
+        <img class="poster" src={item.vod?.pic || item.image || "/favicon.svg"} alt={item.title} loading="lazy" />
+        <div>
+          <div class="rank">#{index + 1} {item.hotScore}</div>
+          <h3>
+            <a href={item.vod ? `/detail/${item.vod.id}` : `/search?q=${encodeURIComponent(item.title)}`}>{item.title}</a>
+          </h3>
+          <p class="desc">{item.vod?.note || item.desc || "点击搜索站内播放资源"}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

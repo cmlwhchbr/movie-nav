@@ -1,0 +1,50 @@
+---
+import "../../styles/global.css";
+import { getVodDetail } from "../../lib/maccms";
+import { env } from "../../lib/env";
+
+const runtime = env(Astro);
+const id = Astro.params.id || "";
+const vod = await getVodDetail(runtime.MACCMS_API, id);
+
+if (!vod) {
+  return new Response("Not Found", { status: 404 });
+}
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{vod.name} - {runtime.SITE_NAME}</title>
+    <meta name="description" content={vod.desc || vod.note || vod.name} />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="page bar">
+        <a class="brand" href="/">{runtime.SITE_NAME}</a>
+        <nav class="nav"><a href="/">首页</a><a href="/search">搜索</a></nav>
+      </div>
+    </header>
+    <main class="page">
+      <section class="hero">
+        <h1>{vod.name}</h1>
+        <p class="muted">{vod.type} · {vod.year} · {vod.area} · {vod.note}</p>
+      </section>
+      <section class="detail">
+        <img class="poster" src={vod.pic || "/favicon.svg"} alt={vod.name} />
+        <div class="panel">
+          <p>{vod.desc || "暂无简介"}</p>
+          <p class="muted">演员：{vod.actor || "-"}</p>
+          <p class="muted">导演：{vod.director || "-"}</p>
+          <h2>播放列表</h2>
+          <div class="episodes">
+            {vod.episodes.map((ep) => (
+              <a href={`/play/${vod.id}/${ep.index}`}>{ep.name}</a>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

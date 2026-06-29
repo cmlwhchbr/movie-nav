@@ -1,0 +1,34 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "movie-nav",
+  "account_id": "172cd80bdac7d99654a6115d316c1afe",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2026-06-29",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "kv_namespaces": [
+    {
+      "binding": "TOP_CACHE",
+      "id": "1e8ae8b4468b48e9baabd753083cf728"
+    },
+    {
+      "binding": "SESSION",
+      "id": "4e26d3f0168f4aaaa0f5fa3c102572db"
+    }
+  ],
+  "triggers": {
+    "crons": ["0 2 * * *"]
+  },
+  "vars": {
+    "SITE_NAME": "影视热榜导航",
+    "MACCMS_API": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/xml/",
+    "TOP_CACHE_KEY": "baidu-top-v1",
+    "TOP_CACHE_TTL": "86400"
+  }
+}

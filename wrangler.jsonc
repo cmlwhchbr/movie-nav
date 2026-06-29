@@ -29,9 +29,6 @@
       "database_id": "d5bd44ec-8088-4839-bc8a-b5cab1dbda42"
     }
   ],
-  "triggers": {
-    "crons": ["*/10 * * * *"]
-  },
   "vars": {
     "SITE_NAME": "影视热榜导航",
     "MACCMS_API": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/xml/",

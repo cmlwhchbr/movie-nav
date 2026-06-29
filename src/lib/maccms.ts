@@ -24,7 +24,7 @@ export interface Episode {
 }
 
 export async function listVod(api: string, page = 1): Promise<VodItem[]> {
-  const xml = await fetchXml(api, { ac: "list", pg: String(page) });
+  const xml = await fetchXml(api, { ac: "detail", pg: String(page) });
   return videoBlocks(xml).map(parseVideoBlock);
 }
 

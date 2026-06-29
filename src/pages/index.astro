@@ -66,7 +66,9 @@ const teleplayTop = topList.filter((item) => item.category === "teleplay");
         <div class="list">
           {latest.map((vod) => (
             <article class="row">
-              <img class="poster" src={vod.pic || "/favicon.svg"} alt={vod.name} loading="lazy" />
+              <a class="poster-link" href={`/detail/${vod.id}`} aria-label={`查看${vod.name}`}>
+                <img class="poster" src={vod.pic || "/favicon.svg"} alt={vod.name} loading="lazy" />
+              </a>
               <div>
                 <h3><a href={`/detail/${vod.id}`}>{vod.name}</a></h3>
                 <p class="muted">{vod.type} · {vod.note}</p>

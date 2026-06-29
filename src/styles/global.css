@@ -151,6 +151,11 @@ button,
   object-fit: cover;
 }
 
+.poster-link {
+  display: block;
+  width: fit-content;
+}
+
 .rank {
   color: var(--accent-2);
   font-weight: 700;

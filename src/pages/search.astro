@@ -39,16 +39,18 @@ if (q.trim()) {
           <input class="min-w-0 rounded border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm outline-none focus:border-rose-500" name="q" value={q} placeholder="输入片名、女优、番号、标签" />
           <button class="rounded bg-rose-600 px-5 py-3 text-sm font-semibold text-white hover:bg-rose-500">搜索</button>
         </form>
-        <div class="mt-5">
-          <h2 class="mb-3 text-base font-bold text-zinc-200">关键词找片</h2>
-          <div class="flex flex-wrap gap-2">
-            {searchTags.map((tag) => (
-              <a class="rounded border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-300 hover:border-rose-500 hover:text-white" href={`/search?q=${encodeURIComponent(tag)}`}>
-                {tag}
-              </a>
-            ))}
+        {!q.trim() && (
+          <div class="mt-5">
+            <h2 class="mb-3 text-base font-bold text-zinc-200">关键词找片</h2>
+            <div class="flex flex-wrap gap-2">
+              {searchTags.map((tag) => (
+                <a class="rounded border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-300 hover:border-rose-500 hover:text-white" href={`/search?q=${encodeURIComponent(tag)}`}>
+                  {tag}
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         {error && <p class="mt-3 text-sm text-red-400">搜索失败：{error}</p>}
       </section>
       <VideoGrid items={list} />
@@ -57,6 +59,20 @@ if (q.trim()) {
           {page > 1 && <a class="pill" href={`/search?q=${encodeURIComponent(q)}&page=${page - 1}`}>上一页</a>}
           {list.length === limit && <a class="pill" href={`/search?q=${encodeURIComponent(q)}&page=${page + 1}`}>加载更多</a>}
         </div>
+      )}
+      {q.trim() && (
+        <section class="mt-10 rounded-md border border-zinc-800 bg-zinc-900 p-5">
+          <div>
+            <h2 class="mb-3 text-base font-bold text-zinc-200">关键词找片</h2>
+            <div class="flex flex-wrap gap-2">
+              {searchTags.map((tag) => (
+                <a class="rounded border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-300 hover:border-rose-500 hover:text-white" href={`/search?q=${encodeURIComponent(tag)}`}>
+                  {tag}
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
       )}
     </main>
   </body>

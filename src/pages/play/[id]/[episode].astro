@@ -19,7 +19,7 @@ if (!current) {
 }
 
 const playerUrl = vod.source === 3 || current.player === "aosika"
-  ? `https://askvodbf.com/play.html?url=${encodeURIComponent(current.url)}`
+  ? `https://askvodbf.com/play.html?url=${current.url}`
   : current.url;
 const useIframePlayer = vod.source === 3 || current.player === "aosika" || !isDirectVideo(current.url);
 ---

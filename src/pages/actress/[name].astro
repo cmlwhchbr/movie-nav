@@ -1,0 +1,33 @@
+---
+import "../../styles/global.css";
+import Header from "../../components/Header.astro";
+import VideoGrid from "../../components/VideoGrid.astro";
+import { listCatalogVideos } from "../../lib/catalog";
+import { env } from "../../lib/env";
+
+const runtime = env(Astro);
+const siteName = runtime.SITE_NAME || "成人视频导航";
+const name = decodeURIComponent(Astro.params.name || "");
+const page = Math.max(Number(Astro.url.searchParams.get("page") || 1), 1);
+const limit = 32;
+const items = await listCatalogVideos(runtime, { actor: name, order: "latest", limit, offset: (page - 1) * limit });
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{name} - {siteName}</title>
+  </head>
+  <body>
+    <Header siteName={siteName} />
+    <main class="page py-6">
+      <h1 class="mb-5 text-2xl font-black">{name}</h1>
+      <VideoGrid items={items} />
+      <div class="mt-7 flex justify-center gap-3">
+        {page > 1 && <a class="pill" href={`/actress/${encodeURIComponent(name)}?page=${page - 1}`}>上一页</a>}
+        {items.length === limit && <a class="pill" href={`/actress/${encodeURIComponent(name)}?page=${page + 1}`}>加载更多</a>}
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+---
+import "../../styles/global.css";
+import Header from "../../components/Header.astro";
+import VideoGrid from "../../components/VideoGrid.astro";
+import { listCatalogVideos } from "../../lib/catalog";
+import { env } from "../../lib/env";
+
+const runtime = env(Astro);
+const siteName = runtime.SITE_NAME || "成人视频导航";
+const tag = decodeURIComponent(Astro.params.tag || "");
+const page = Math.max(Number(Astro.url.searchParams.get("page") || 1), 1);
+const limit = 32;
+const items = await listCatalogVideos(runtime, { tag, order: "latest", limit, offset: (page - 1) * limit });
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tag} - {siteName}</title>
+  </head>
+  <body>
+    <Header siteName={siteName} />
+    <main class="page py-6">
+      <div class="mb-5 flex items-end justify-between gap-3">
+        <h1 class="text-2xl font-black">{tag}</h1>
+        <a class="text-sm text-zinc-400 hover:text-white" href="/tags">全部关键词</a>
+      </div>
+      <VideoGrid items={items} />
+      <div class="mt-7 flex justify-center gap-3">
+        {page > 1 && <a class="pill" href={`/tag/${encodeURIComponent(tag)}?page=${page - 1}`}>上一页</a>}
+        {items.length === limit && <a class="pill" href={`/tag/${encodeURIComponent(tag)}?page=${page + 1}`}>加载更多</a>}
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,27 +1,30 @@
 ---
 import "../styles/global.css";
-import { getCachedTop, topUpdatedAt } from "../lib/top";
-import { detailUrl, listVodAll } from "../lib/maccms";
+import Header from "../components/Header.astro";
+import VideoGrid from "../components/VideoGrid.astro";
+import { listCatalogVideos } from "../lib/catalog";
 import { env } from "../lib/env";
-import TopSection from "../components/TopSection.astro";
 
 const runtime = env(Astro);
-const siteName = runtime.SITE_NAME || "影视热榜导航";
-let topList = [];
+const siteName = runtime.SITE_NAME || "成人视频导航";
 let latest = [];
-let updatedAt = "";
+let domestic = [];
+let gossip = [];
+let japanKorea = [];
+let hot = [];
 let error = "";
 
 try {
-  topList = await getCachedTop(runtime);
-  updatedAt = await topUpdatedAt(runtime);
-  latest = await listVodAll(runtime, 1);
+  [latest, domestic, gossip, japanKorea, hot] = await Promise.all([
+    listCatalogVideos(runtime, { order: "latest", limit: 4 }),
+    listCatalogVideos(runtime, { type: "国产", order: "latest", limit: 8 }),
+    listCatalogVideos(runtime, { tag: "黑料", order: "latest", limit: 8 }),
+    listCatalogVideos(runtime, { type: "日韩", order: "latest", limit: 8 }),
+    listCatalogVideos(runtime, { order: "hot", limit: 8 })
+  ]);
 } catch (exception) {
   error = exception instanceof Error ? exception.message : "数据读取失败";
 }
-
-const movieTop = topList.filter((item) => item.category === "movie" && item.vod);
-const teleplayTop = topList.filter((item) => item.category === "teleplay" && item.vod);
 ---
 
 <html lang="zh-CN">
@@ -29,84 +32,75 @@ const teleplayTop = topList.filter((item) => item.category === "teleplay" && ite
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{siteName}</title>
-    <meta name="description" content="每日自动同步百度电影、电视剧热榜，聚合 MacCMS 影视资源，支持搜索和在线播放。" />
+    <meta name="description" content="成人影片导航，支持分类、女优、关键词搜索和多线路播放。" />
   </head>
   <body>
-    <header class="topbar">
-      <div class="page bar">
-        <a class="brand" href="/">{siteName}</a>
-        <nav class="nav">
-          <a href="/">首页</a>
-          <a href="/search">搜索</a>
-          <button class="nav-button" type="button" id="refreshTop">刷新榜单</button>
-        </nav>
-      </div>
-    </header>
-
-    <main class="page">
-      <section class="hero">
-        <h1>百度热榜影视导航</h1>
-        <p class="muted">电影、电视剧热榜每日缓存，播放数据来自 MacCMS API。</p>
-        <form class="search" action="/search">
-          <input name="q" placeholder="搜索电影、电视剧、演员" />
-          <button>搜索</button>
-        </form>
-        {updatedAt && <p class="muted">榜单更新时间：{updatedAt}</p>}
-        {error && <p style="color: var(--danger)">数据读取失败：{error}</p>}
+    <Header siteName={siteName} />
+    <main class="page py-6">
+      <section class="mb-7 grid gap-4 lg:grid-cols-[1fr_360px]">
+        <div class="rounded-md border border-zinc-800 bg-zinc-900 p-5">
+          <h1 class="text-2xl font-black text-white sm:text-3xl">成人影视导航</h1>
+          <form class="mt-5 grid grid-cols-[1fr_auto] gap-2" action="/search">
+            <input class="min-w-0 rounded border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm outline-none focus:border-rose-500" name="q" placeholder="搜索片名、女优、番号、标签" />
+            <button class="rounded bg-rose-600 px-5 py-3 text-sm font-semibold text-white hover:bg-rose-500">搜索</button>
+          </form>
+          {error && <p class="mt-3 text-sm text-red-400">数据读取失败：{error}</p>}
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <a class="rounded-md border border-zinc-800 bg-zinc-900 p-4 hover:border-rose-500" href="/category">
+            <div class="text-lg font-bold">分类找片</div>
+            <div class="mt-2 text-xs text-zinc-400">按资源站分类浏览</div>
+          </a>
+          <a class="rounded-md border border-zinc-800 bg-zinc-900 p-4 hover:border-rose-500" href="/actresses">
+            <div class="text-lg font-bold">女优找片</div>
+            <div class="mt-2 text-xs text-zinc-400">点击女优调用搜索</div>
+          </a>
+          <a class="rounded-md border border-zinc-800 bg-zinc-900 p-4 hover:border-rose-500" href="/tags">
+            <div class="text-lg font-bold">关键词找片</div>
+            <div class="mt-2 text-xs text-zinc-400">按场景和厂商标签</div>
+          </a>
+        </div>
       </section>
 
-      <TopSection title="百度电影榜" items={movieTop} />
-      <TopSection title="百度电视剧榜" items={teleplayTop} />
+      <section class="mb-9">
+        <div class="mb-3 flex items-end justify-between gap-3">
+          <h2 class="text-xl font-bold">最新更新</h2>
+          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/latest">加载更多</a>
+        </div>
+        <VideoGrid items={latest} />
+      </section>
 
-      <section>
-        <div class="section-title">
-          <h2>最新入库</h2>
-          <span class="muted">MacCMS 最新数据</span>
+      <section class="mb-9">
+        <div class="mb-3 flex items-end justify-between gap-3">
+          <h2 class="text-xl font-bold">国产</h2>
+          <a class="text-sm text-zinc-400 hover:text-white" href="/category/国产">更多</a>
         </div>
-        <div class="list">
-          {latest.map((vod) => (
-            <article class="row">
-              <a class="poster-link" href={detailUrl(vod)} aria-label={`查看${vod.name}`}>
-                <img class="poster" src={vod.pic || "/favicon.svg"} alt={vod.name} loading="lazy" />
-              </a>
-              <div>
-                <h3><a href={detailUrl(vod)}>{vod.name}</a></h3>
-                <p class="muted">{vod.type} · {vod.note}</p>
-              </div>
-              <a class="btn" href={detailUrl(vod)}>查看</a>
-            </article>
-          ))}
+        <VideoGrid items={domestic} />
+      </section>
+
+      <section class="mb-9">
+        <div class="mb-3 flex items-end justify-between gap-3">
+          <h2 class="text-xl font-bold">黑料吃瓜</h2>
+          <a class="text-sm text-zinc-400 hover:text-white" href="/tag/黑料">更多</a>
         </div>
+        <VideoGrid items={gossip} />
+      </section>
+
+      <section class="mb-9">
+        <div class="mb-3 flex items-end justify-between gap-3">
+          <h2 class="text-xl font-bold">日韩</h2>
+          <a class="text-sm text-zinc-400 hover:text-white" href="/category/日韩">更多</a>
+        </div>
+        <VideoGrid items={japanKorea} />
+      </section>
+
+      <section class="mb-9">
+        <div class="mb-3 flex items-end justify-between gap-3">
+          <h2 class="text-xl font-bold">热门</h2>
+          <a class="text-sm text-zinc-400 hover:text-white" href="/category/hot">更多</a>
+        </div>
+        <VideoGrid items={hot} />
       </section>
     </main>
-    <footer class="page">{siteName}</footer>
-    <script>
-      const refreshButton = document.querySelector<HTMLButtonElement>("#refreshTop");
-
-      refreshButton?.addEventListener("click", async () => {
-        const originalText = refreshButton.textContent || "刷新榜单";
-        refreshButton.disabled = true;
-        refreshButton.textContent = "刷新中...";
-
-        try {
-          const response = await fetch("/api/refresh-top", {
-            headers: { accept: "application/json" },
-          });
-
-          if (!response.ok) {
-            throw new Error("refresh failed");
-          }
-
-          refreshButton.textContent = "刷新完成";
-          window.setTimeout(() => window.location.reload(), 600);
-        } catch {
-          refreshButton.disabled = false;
-          refreshButton.textContent = "刷新失败";
-          window.setTimeout(() => {
-            refreshButton.textContent = originalText;
-          }, 1800);
-        }
-      });
-    </script>
   </body>
 </html>

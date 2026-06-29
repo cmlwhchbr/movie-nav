@@ -1,0 +1,16 @@
+---
+const { siteName = "成人视频导航" } = Astro.props;
+---
+
+<header class="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur">
+  <div class="page flex min-h-16 items-center justify-between gap-4">
+    <a class="text-xl font-black tracking-normal text-white" href="/">{siteName}</a>
+    <nav class="flex flex-wrap items-center justify-end gap-3 text-sm text-zinc-300">
+      <a class="hover:text-white" href="/">首页</a>
+      <a class="hover:text-white" href="/category">分类找片</a>
+      <a class="hover:text-white" href="/actresses">女优找片</a>
+      <a class="hover:text-white" href="/tags">关键词找片</a>
+      <a class="hover:text-white" href="/search">搜索</a>
+    </nav>
+  </div>
+</header>

@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.8",
-    "astro": "^5.13.0"
+    "@tailwindcss/vite": "^4.3.1",
+    "astro": "^5.13.0",
+    "tailwindcss": "^4.3.1"
   },
   "devDependencies": {
     "mysql2": "^3.22.5",

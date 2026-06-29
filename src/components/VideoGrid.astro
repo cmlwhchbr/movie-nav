@@ -1,0 +1,25 @@
+---
+import { catalogDetailUrl, type CatalogVideo } from "../lib/catalog";
+
+const { items = [] } = Astro.props as { items: CatalogVideo[] };
+---
+
+<div class="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+  {items.map((item) => (
+    <article class="adult-card">
+      <a class="poster-frame" href={catalogDetailUrl(item)} aria-label={`播放${item.name}`}>
+        <img class="poster-img" src={item.pic || "/favicon.svg"} alt={item.name} loading="lazy" />
+        {item.note && (
+          <span class="absolute bottom-2 right-2 max-w-[70%] truncate rounded bg-black/75 px-2 py-1 text-xs text-white">
+            {item.note}
+          </span>
+        )}
+      </a>
+      <a class="block p-3" href={catalogDetailUrl(item)}>
+        <h3 class="line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-zinc-100">{item.name}</h3>
+        <p class="mt-2 truncate text-xs text-zinc-400">{item.type || item.year || "站内资源"}</p>
+        <p class="mt-1 truncate text-xs text-zinc-500">{item.actor || item.area || `播放 ${item.hits}`}</p>
+      </a>
+    </article>
+  ))}
+</div>

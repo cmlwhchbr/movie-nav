@@ -1,27 +1,21 @@
 ---
 import "../styles/global.css";
-import { searchCatalog } from "../lib/catalog";
-import { detailUrl, searchVodAll } from "../lib/maccms";
+import Header from "../components/Header.astro";
+import VideoGrid from "../components/VideoGrid.astro";
+import { listCatalogVideos } from "../lib/catalog";
 import { env } from "../lib/env";
 
 const runtime = env(Astro);
+const siteName = runtime.SITE_NAME || "成人视频导航";
 const q = Astro.url.searchParams.get("q") || "";
+const page = Math.max(Number(Astro.url.searchParams.get("page") || 1), 1);
+const limit = 32;
 let list = [];
 let error = "";
 
 if (q.trim()) {
   try {
-    const [apiList, catalogList] = await Promise.all([
-      searchVodAll(runtime, q),
-      searchCatalog(runtime, q)
-    ]);
-    const seen = new Set();
-    list = [...apiList, ...catalogList].filter((vod) => {
-      const key = `${vod.source}:${vod.id}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+    list = await listCatalogVideos(runtime, { keyword: q, order: "latest", limit, offset: (page - 1) * limit });
   } catch (exception) {
     error = exception instanceof Error ? exception.message : "搜索失败";
   }
@@ -32,38 +26,26 @@ if (q.trim()) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{q ? `搜索：${q}` : "搜索"} - {runtime.SITE_NAME}</title>
+    <title>{q ? `搜索：${q}` : "搜索"} - {siteName}</title>
   </head>
   <body>
-    <header class="topbar">
-      <div class="page bar">
-        <a class="brand" href="/">{runtime.SITE_NAME}</a>
-        <nav class="nav"><a href="/">首页</a></nav>
-      </div>
-    </header>
-    <main class="page">
-      <section class="hero">
-        <h1>搜索影视资源</h1>
-        <form class="search" action="/search">
-          <input name="q" value={q} placeholder="输入电影、电视剧、演员" />
-          <button>搜索</button>
+    <Header siteName={siteName} />
+    <main class="page py-6">
+      <section class="mb-6 rounded-md border border-zinc-800 bg-zinc-900 p-5">
+        <h1 class="mb-4 text-2xl font-black">搜索</h1>
+        <form class="grid grid-cols-[1fr_auto] gap-2" action="/search">
+          <input class="min-w-0 rounded border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm outline-none focus:border-rose-500" name="q" value={q} placeholder="输入片名、女优、番号、标签" />
+          <button class="rounded bg-rose-600 px-5 py-3 text-sm font-semibold text-white hover:bg-rose-500">搜索</button>
         </form>
-        {error && <p style="color: var(--danger)">搜索失败：{error}</p>}
+        {error && <p class="mt-3 text-sm text-red-400">搜索失败：{error}</p>}
       </section>
-      <section class="list">
-        {list.map((vod) => (
-          <article class="row">
-            <a class="poster-link" href={detailUrl(vod)} aria-label={`查看${vod.name}`}>
-              <img class="poster" src={vod.pic || "/favicon.svg"} alt={vod.name} loading="lazy" />
-            </a>
-            <div>
-              <h3><a href={detailUrl(vod)}>{vod.name}</a></h3>
-              <p class="muted">源{vod.source + 1} · {vod.type} · {vod.year} · {vod.note}</p>
-            </div>
-            <a class="btn" href={detailUrl(vod)}>播放</a>
-          </article>
-        ))}
-      </section>
+      <VideoGrid items={list} />
+      {q && (
+        <div class="mt-7 flex justify-center gap-3">
+          {page > 1 && <a class="pill" href={`/search?q=${encodeURIComponent(q)}&page=${page - 1}`}>上一页</a>}
+          {list.length === limit && <a class="pill" href={`/search?q=${encodeURIComponent(q)}&page=${page + 1}`}>加载更多</a>}
+        </div>
+      )}
     </main>
   </body>
 </html>

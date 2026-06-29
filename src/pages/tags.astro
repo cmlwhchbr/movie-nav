@@ -1,0 +1,40 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import { env } from "../lib/env";
+import { hotTags, makerTags, safeTags, sceneTags, specialTags } from "../lib/tags";
+
+const runtime = env(Astro);
+const siteName = runtime.SITE_NAME || "成人视频导航";
+const sections = [
+  ["场景标签", safeTags(sceneTags)],
+  ["制片商标签", safeTags(makerTags)],
+  ["热门标签", safeTags(hotTags)],
+  ["专题标签", safeTags(specialTags)]
+];
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>关键词找片 - {siteName}</title>
+  </head>
+  <body>
+    <Header siteName={siteName} />
+    <main class="page py-6">
+      <h1 class="mb-5 text-2xl font-black">关键词找片</h1>
+      {sections.map(([title, tags]) => (
+        <section class="mb-8">
+          <div class="mb-3 flex items-center gap-3">
+            <h2 class="text-xl font-bold">{title}</h2>
+            <span class="text-sm text-zinc-500">{tags.length}</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            {tags.map((tag) => <a class="pill" href={`/tag/${encodeURIComponent(tag)}`}>{tag}</a>)}
+          </div>
+        </section>
+      ))}
+    </main>
+  </body>
+</html>

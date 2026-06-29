@@ -149,9 +149,10 @@ function upsertVideoStatement(row) {
     sql: `
       INSERT INTO videos (
         id, source_key, source_vod_id, name, type, pic, note, actor, director,
-        area, lang, year, description, source_updated_at, collected_at, updated_at
+        area, lang, year, description, source_updated_at, collected_at, updated_at,
+        type_id, parent_type_id, tags, hits
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?, ?, ?, ?)
       ON CONFLICT(source_key, source_vod_id) DO UPDATE SET
         name = excluded.name,
         type = excluded.type,
@@ -164,6 +165,10 @@ function upsertVideoStatement(row) {
         year = excluded.year,
         description = excluded.description,
         source_updated_at = excluded.source_updated_at,
+        type_id = excluded.type_id,
+        parent_type_id = excluded.parent_type_id,
+        tags = excluded.tags,
+        hits = excluded.hits,
         updated_at = CURRENT_TIMESTAMP
     `,
     params: [
@@ -180,7 +185,11 @@ function upsertVideoStatement(row) {
       clean(row.vod_lang),
       clean(row.vod_year),
       cleanHtml(row.vod_content),
-      String(row.vod_time || row.vod_time_add || "")
+      String(row.vod_time || row.vod_time_add || ""),
+      Number(row.type_id || 0),
+      Number(row.type_id_1 || 0),
+      clean([row.vod_tag, row.vod_class].filter(Boolean).join(",")),
+      Number(row.vod_hits || 0)
     ]
   };
 }

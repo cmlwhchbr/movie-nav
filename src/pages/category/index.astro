@@ -1,0 +1,39 @@
+---
+import "../../styles/global.css";
+import Header from "../../components/Header.astro";
+import { listCatalogTypes } from "../../lib/catalog";
+import { env } from "../../lib/env";
+
+const runtime = env(Astro);
+const siteName = runtime.SITE_NAME || "成人视频导航";
+const types = await listCatalogTypes(runtime);
+---
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>分类找片 - {siteName}</title>
+  </head>
+  <body>
+    <Header siteName={siteName} />
+    <main class="page py-6">
+      <h1 class="mb-5 text-2xl font-black">分类找片</h1>
+      <div class="mb-6 flex flex-wrap gap-2">
+        <a class="pill" href="/category/latest">最新更新</a>
+        <a class="pill" href="/category/hot">热门播放</a>
+        <a class="pill" href="/category/国产">国产</a>
+        <a class="pill" href="/category/日韩">日韩</a>
+        <a class="pill" href="/tag/黑料">黑料吃瓜</a>
+      </div>
+      <div class="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
+        {types.map((type) => (
+          <a class="rounded-md border border-zinc-800 bg-zinc-900 p-4 hover:border-rose-500" href={`/category/${encodeURIComponent(type.type_name)}`}>
+            <div class="font-semibold">{type.type_name}</div>
+            <div class="mt-2 text-xs text-zinc-500">ID {type.type_id}</div>
+          </a>
+        ))}
+      </div>
+    </main>
+  </body>
+</html>

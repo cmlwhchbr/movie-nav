@@ -17,6 +17,11 @@ const current = vod.episodes[episodeIndex];
 if (!current) {
   return new Response("Not Found", { status: 404 });
 }
+
+const playerUrl = vod.source === 3 || current.player === "aosika"
+  ? `https://askvodbf.com/play.html?url=${encodeURIComponent(current.url)}`
+  : current.url;
+const useIframePlayer = vod.source === 3 || current.player === "aosika" || !isDirectVideo(current.url);
 ---
 
 <html lang="zh-CN">
@@ -38,10 +43,10 @@ if (!current) {
         <p class="muted">{current.name}</p>
       </section>
       <section class="panel">
-        {isDirectVideo(current.url) ? (
-          <video class="player" src={current.url} controls playsinline preload="metadata"></video>
+        {!useIframePlayer ? (
+          <video class="player" src={playerUrl} controls playsinline preload="metadata"></video>
         ) : (
-          <iframe class="player" src={current.url} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+          <iframe class="player" src={playerUrl} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
         )}
         <p><a href={current.url} target="_blank" rel="nofollow noopener">新窗口打开播放地址</a></p>
       </section>

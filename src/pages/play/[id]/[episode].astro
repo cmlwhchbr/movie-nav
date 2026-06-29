@@ -24,6 +24,17 @@ if (!source || !current) {
   return new Response("Not Found", { status: 404 });
 }
 
+const failedLines = new Set(
+  (Astro.url.searchParams.get("failed") || "")
+    .split(",")
+    .map((value) => Number(value))
+    .filter((value) => Number.isInteger(value))
+);
+const nextSource = nextPlayableSource(vod.play_sources || [], source.source_index, failedLines);
+const nextEpisode = nextSource?.episodes.find((item) => item.episode_index === current.episode_index) || nextSource?.episodes[0];
+const nextLineUrl = nextSource && nextEpisode
+  ? withFailedLines(catalogPlayUrl(vod, nextSource.source_index, nextEpisode.episode_index), [...failedLines, source.source_index])
+  : "";
 const needsFallbackParser = /aosika/i.test(current.player || source.source_code);
 const useIframePlayer = !isDirectVideo(current.url);
 const lineStartTimes: Record<number, number> = {
@@ -59,6 +70,21 @@ function seededRank(seed: number): number {
   value ^= value << 5;
   return value >>> 0;
 }
+
+function nextPlayableSource(sources: NonNullable<typeof vod.play_sources>, currentIndex: number, failed: Set<number>) {
+  const ordered = [...sources].filter((item) => item.episodes.length > 0).sort((a, b) => a.source_index - b.source_index);
+  const candidates = [
+    ...ordered.filter((item) => item.source_index > currentIndex),
+    ...ordered.filter((item) => item.source_index < currentIndex)
+  ];
+
+  return candidates.find((item) => !failed.has(item.source_index)) || null;
+}
+
+function withFailedLines(url: string, failed: number[]): string {
+  const unique = [...new Set(failed)].join(",");
+  return `${url}&failed=${encodeURIComponent(unique)}`;
+}
 ---
 
 <html lang="zh-CN">
@@ -89,6 +115,7 @@ function seededRank(seed: number): number {
             data-src={playerUrl}
             data-start-at={startAt}
             data-fallback-src={fallbackParserUrl}
+            data-next-line-url={nextLineUrl}
             controls
             playsinline
             preload="metadata"
@@ -97,6 +124,11 @@ function seededRank(seed: number): number {
           <iframe class="h-[62vh] min-h-[260px] w-full border-0 bg-black" src={playerUrl} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
         )}
       </section>
+      {nextLineUrl && (
+        <p id="autoSwitchStatus" class="mt-2 text-sm text-zinc-500" data-next-line-url={nextLineUrl}>
+          当前线路卡顿或无法播放时会自动切换下一线路
+        </p>
+      )}
       <div class="mt-3 flex flex-wrap gap-2">
         {searchTerms.map((term) => (
           <a class="rounded border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300 hover:border-rose-500 hover:text-white" href={`/search?q=${encodeURIComponent(term)}`}>
@@ -131,13 +163,57 @@ function seededRank(seed: number): number {
       import Hls from "hls.js/dist/hls.light.mjs";
 
       const video = document.querySelector<HTMLVideoElement>("#videoPlayer");
+      const autoSwitchStatus = document.querySelector<HTMLElement>("#autoSwitchStatus");
+      const iframeNextLineUrl = autoSwitchStatus?.dataset.nextLineUrl || "";
 
       if (video) {
         const src = video.dataset.src || "";
         const startAt = Number(video.dataset.startAt || 0);
         const fallbackSrc = video.dataset.fallbackSrc || "";
+        const nextLineUrl = video.dataset.nextLineUrl || "";
         let didSeek = false;
         let seekTimer = 0;
+        let lastProgressTime = 0;
+        let lastProgressAt = Date.now();
+        let startupTimer = 0;
+        let stallTimer = 0;
+        let didSwitch = false;
+
+        const switchToNextLine = (reason: string) => {
+          if (didSwitch || !nextLineUrl) return;
+          didSwitch = true;
+          if (autoSwitchStatus) {
+            autoSwitchStatus.textContent = `当前线路${reason}，正在切换下一线路...`;
+          }
+          window.location.href = nextLineUrl;
+        };
+
+        const markProgress = () => {
+          if (video.currentTime > lastProgressTime + 0.5) {
+            lastProgressTime = video.currentTime;
+            lastProgressAt = Date.now();
+          }
+        };
+
+        const startHealthCheck = () => {
+          window.clearTimeout(startupTimer);
+          window.clearInterval(stallTimer);
+          lastProgressTime = video.currentTime;
+          lastProgressAt = Date.now();
+
+          startupTimer = window.setTimeout(() => {
+            if (!video.paused && video.currentTime <= lastProgressTime + 0.5) {
+              switchToNextLine("加载过慢");
+            }
+          }, 15000);
+
+          stallTimer = window.setInterval(() => {
+            if (video.paused || video.ended) return;
+            if (Date.now() - lastProgressAt > 12000) {
+              switchToNextLine("播放卡顿");
+            }
+          }, 4000);
+        };
 
         const scheduleSeek = () => {
           if (!startAt || didSeek || seekTimer || video.readyState < 3) return;
@@ -172,7 +248,9 @@ function seededRank(seed: number): number {
           hls.on(Hls.Events.ERROR, (_event, data) => {
             if (data.fatal) {
               hls.destroy();
-              if (fallbackSrc) {
+              if (nextLineUrl) {
+                switchToNextLine("无法播放");
+              } else if (fallbackSrc) {
                 fallbackToParser();
               } else {
                 video.src = src;
@@ -190,7 +268,20 @@ function seededRank(seed: number): number {
           video.src = src;
         }
 
+        video.addEventListener("play", startHealthCheck);
+        video.addEventListener("playing", markProgress);
+        video.addEventListener("timeupdate", markProgress);
+        video.addEventListener("error", () => switchToNextLine("播放失败"));
+        video.addEventListener("waiting", () => {
+          lastProgressAt = Math.min(lastProgressAt, Date.now() - 9000);
+        });
+        video.addEventListener("ended", () => {
+          window.clearTimeout(startupTimer);
+          window.clearInterval(stallTimer);
+        });
+
       }
+
     </script>
   </body>
 </html>

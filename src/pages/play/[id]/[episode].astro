@@ -5,6 +5,7 @@ import VideoGrid from "../../../components/VideoGrid.astro";
 import { catalogDetailUrl, catalogPlayUrl, getCatalogVideo, relatedCatalogVideos } from "../../../lib/catalog";
 import { env } from "../../../lib/env";
 import { isDirectVideo } from "../../../lib/maccms";
+import { safeTags, sceneTags } from "../../../lib/tags";
 
 const runtime = env(Astro);
 const siteName = runtime.SITE_NAME || "成人视频导航";
@@ -36,7 +37,28 @@ const startAt = lineStartTimes[source.source_index] || 0;
 const playerUrl = current.url;
 const fallbackParserUrl = needsFallbackParser ? `https://askvodbf.com/play.html?url=${current.url}` : "";
 const related = await relatedCatalogVideos(runtime, vod, 8);
-const searchTerms = ["国产主播", "黑料吃瓜", "91探花", "麻豆", "果冻", "口交", "颜射", "肛交", "深喉"];
+const searchTerms = stableSample(safeTags(sceneTags), `${vod.source_vod_id}-${source.source_index}-${current.episode_index}`, 18);
+
+function stableSample(values: string[], seedText: string, limit: number): string[] {
+  let seed = 0;
+  for (let index = 0; index < seedText.length; index += 1) {
+    seed = (seed * 31 + seedText.charCodeAt(index)) >>> 0;
+  }
+
+  return values
+    .map((value, index) => ({ value, rank: seededRank(seed + index * 9973) }))
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, limit)
+    .map((item) => item.value);
+}
+
+function seededRank(seed: number): number {
+  let value = seed || 1;
+  value ^= value << 13;
+  value ^= value >>> 17;
+  value ^= value << 5;
+  return value >>> 0;
+}
 ---
 
 <html lang="zh-CN">

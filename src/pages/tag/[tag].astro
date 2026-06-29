@@ -9,7 +9,7 @@ const runtime = env(Astro);
 const siteName = runtime.SITE_NAME || "成人视频导航";
 const tag = decodeURIComponent(Astro.params.tag || "");
 const page = Math.max(Number(Astro.url.searchParams.get("page") || 1), 1);
-const limit = 32;
+const limit = 16;
 const items = await listCatalogVideos(runtime, { tag, order: "latest", limit, offset: (page - 1) * limit });
 ---
 

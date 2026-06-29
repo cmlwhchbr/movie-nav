@@ -116,6 +116,8 @@ export interface CatalogVideo {
   description: string;
   hits: number;
   source_updated_at: string;
+  first_source_index: number;
+  first_episode_index: number;
   play_sources?: CatalogPlaySource[];
 }
 
@@ -178,7 +180,9 @@ export async function listCatalogVideos(env: Env, options: {
       id, source_vod_id, name, type, COALESCE(type_id, 0) AS type_id,
       COALESCE(parent_type_id, 0) AS parent_type_id, COALESCE(tags, '') AS tags,
       pic, note, actor, director, area, lang, year, description,
-      COALESCE(hits, 0) AS hits, source_updated_at
+      COALESCE(hits, 0) AS hits, source_updated_at,
+      COALESCE((SELECT e.source_index FROM episodes e WHERE e.video_id = videos.id ORDER BY e.source_index ASC, e.episode_index ASC LIMIT 1), 0) AS first_source_index,
+      COALESCE((SELECT e.episode_index FROM episodes e WHERE e.video_id = videos.id ORDER BY e.source_index ASC, e.episode_index ASC LIMIT 1), 0) AS first_episode_index
     FROM videos
     WHERE ${where.join(" AND ")}
     ORDER BY ${orderSql}
@@ -194,7 +198,9 @@ export async function getCatalogVideo(env: Env, id: string): Promise<CatalogVide
       id, source_vod_id, name, type, COALESCE(type_id, 0) AS type_id,
       COALESCE(parent_type_id, 0) AS parent_type_id, COALESCE(tags, '') AS tags,
       pic, note, actor, director, area, lang, year, description,
-      COALESCE(hits, 0) AS hits, source_updated_at
+      COALESCE(hits, 0) AS hits, source_updated_at,
+      COALESCE((SELECT e.source_index FROM episodes e WHERE e.video_id = videos.id ORDER BY e.source_index ASC, e.episode_index ASC LIMIT 1), 0) AS first_source_index,
+      COALESCE((SELECT e.episode_index FROM episodes e WHERE e.video_id = videos.id ORDER BY e.source_index ASC, e.episode_index ASC LIMIT 1), 0) AS first_episode_index
     FROM videos
     WHERE source_key = 'maccms' AND (source_vod_id = ? OR id = ?)
     LIMIT 1
@@ -269,6 +275,10 @@ export function catalogPlayUrl(video: Pick<CatalogVideo, "source_vod_id">, sourc
   return `/play/${encodeURIComponent(video.source_vod_id)}/${episodeIndex}?source=maccms&line=${sourceIndex}`;
 }
 
+export function catalogPrimaryPlayUrl(video: Pick<CatalogVideo, "source_vod_id" | "first_source_index" | "first_episode_index">): string {
+  return catalogPlayUrl(video, video.first_source_index || 0, video.first_episode_index || 0);
+}
+
 export async function catalogStats(env: Env): Promise<{
   videos: number;
   episodes: number;
@@ -325,6 +335,8 @@ interface CatalogVideoRow {
   description: string;
   hits?: number;
   source_updated_at: string;
+  first_source_index?: number;
+  first_episode_index?: number;
 }
 
 interface CatalogEpisodeRow {
@@ -378,6 +390,8 @@ function rowToCatalogVideo(row: CatalogVideoRow): CatalogVideo {
     description: cleanText(row.description || ""),
     hits: row.hits || 0,
     source_updated_at: row.source_updated_at || "",
+    first_source_index: row.first_source_index || 0,
+    first_episode_index: row.first_episode_index || 0,
     play_sources: []
   };
 }

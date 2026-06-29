@@ -3,14 +3,14 @@ const { siteName = "成人视频导航" } = Astro.props;
 ---
 
 <header class="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur">
-  <div class="page flex min-h-16 items-center justify-between gap-4">
-    <a class="text-xl font-black tracking-normal text-white" href="/">{siteName}</a>
-    <nav class="flex flex-wrap items-center justify-end gap-3 text-sm text-zinc-300">
-      <a class="hover:text-white" href="/">首页</a>
-      <a class="hover:text-white" href="/category">分类找片</a>
-      <a class="hover:text-white" href="/actresses">女优找片</a>
-      <a class="hover:text-white" href="/tags">关键词找片</a>
-      <a class="hover:text-white" href="/search">搜索</a>
+  <div class="page relative flex min-h-18 flex-col items-center justify-center gap-3 py-3 md:flex-row">
+    <a class="text-lg font-black tracking-normal text-white md:absolute md:left-0" href="/">{siteName}</a>
+    <nav class="flex flex-wrap items-center justify-center gap-4 text-base font-semibold text-zinc-200 md:gap-8 md:text-lg">
+      <a class="rounded px-1 py-2 hover:text-rose-300" href="/">首页</a>
+      <a class="rounded px-1 py-2 hover:text-rose-300" href="/category">分类找片</a>
+      <a class="rounded px-1 py-2 hover:text-rose-300" href="/actresses">女优找片</a>
+      <a class="rounded px-1 py-2 hover:text-rose-300" href="/tags">关键词找片</a>
+      <a class="rounded px-1 py-2 hover:text-rose-300" href="/search">搜索</a>
     </nav>
   </div>
 </header>

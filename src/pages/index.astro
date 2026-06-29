@@ -38,7 +38,7 @@ const teleplayTop = topList.filter((item) => item.category === "teleplay");
         <nav class="nav">
           <a href="/">首页</a>
           <a href="/search">搜索</a>
-          <a href="/api/refresh-top">刷新榜单</a>
+          <button class="nav-button" type="button" id="refreshTop">刷新榜单</button>
         </nav>
       </div>
     </header>
@@ -78,5 +78,33 @@ const teleplayTop = topList.filter((item) => item.category === "teleplay");
       </section>
     </main>
     <footer class="page">{siteName}</footer>
+    <script>
+      const refreshButton = document.querySelector<HTMLButtonElement>("#refreshTop");
+
+      refreshButton?.addEventListener("click", async () => {
+        const originalText = refreshButton.textContent || "刷新榜单";
+        refreshButton.disabled = true;
+        refreshButton.textContent = "刷新中...";
+
+        try {
+          const response = await fetch("/api/refresh-top", {
+            headers: { accept: "application/json" },
+          });
+
+          if (!response.ok) {
+            throw new Error("refresh failed");
+          }
+
+          refreshButton.textContent = "刷新完成";
+          window.setTimeout(() => window.location.reload(), 600);
+        } catch {
+          refreshButton.disabled = false;
+          refreshButton.textContent = "刷新失败";
+          window.setTimeout(() => {
+            refreshButton.textContent = originalText;
+          }, 1800);
+        }
+      });
+    </script>
   </body>
 </html>

@@ -57,6 +57,19 @@ a {
   color: var(--muted);
 }
 
+.nav-button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+.nav-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .hero {
   padding: 34px 0 22px;
 }

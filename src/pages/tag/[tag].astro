@@ -22,10 +22,16 @@ const items = await listCatalogVideos(runtime, { tag, order: "latest", limit, of
   <body>
     <Header siteName={siteName} />
     <main class="page py-6">
-      <div class="mb-5 flex items-end justify-between gap-3">
-        <h1 class="text-2xl font-black">{tag}</h1>
-        <a class="text-sm text-zinc-400 hover:text-white" href="/tags">全部关键词</a>
-      </div>
+      <section class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-md border border-zinc-800 bg-zinc-900 px-4 py-3">
+        <div>
+          <p class="text-sm text-zinc-500">当前关键词</p>
+          <h1 class="text-xl font-bold text-white">{tag}</h1>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a class="pill" href="/search">返回搜索词</a>
+          <a class="pill" href="/tags">关键词找片</a>
+        </div>
+      </section>
       <VideoGrid items={items} />
       <div class="mt-7 flex justify-center gap-3">
         {page > 1 && <a class="pill" href={`/tag/${encodeURIComponent(tag)}?page=${page - 1}`}>上一页</a>}

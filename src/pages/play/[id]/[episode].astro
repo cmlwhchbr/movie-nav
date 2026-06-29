@@ -107,7 +107,7 @@ function withFailedLines(url: string, failed: number[]): string {
         <h1 class="text-2xl font-black">{vod.name}</h1>
       </section>
 
-      <section class="rounded-md border border-zinc-800 bg-black">
+      <section class="mx-auto max-w-5xl rounded-md border border-zinc-800 bg-black">
         {!useIframePlayer ? (
           <video
             id="videoPlayer"
@@ -121,7 +121,7 @@ function withFailedLines(url: string, failed: number[]): string {
             preload="metadata"
           ></video>
         ) : (
-          <iframe class="h-[62vh] min-h-[260px] w-full border-0 bg-black" src={playerUrl} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+          <iframe class="aspect-video min-h-[260px] w-full border-0 bg-black" src={playerUrl} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
         )}
       </section>
       {nextLineUrl && (

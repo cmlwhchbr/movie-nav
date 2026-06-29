@@ -24,8 +24,16 @@ if (!source || !current) {
 }
 
 const useIframePlayer = !isDirectVideo(current.url) || /aosika/i.test(current.player || source.source_code);
+const lineStartTimes: Record<number, number> = {
+  0: 26,
+  1: 26,
+  2: 16,
+  3: 10,
+  4: 20
+};
+const startAt = lineStartTimes[source.source_index] || 0;
 const playerUrl = /aosika/i.test(current.player || source.source_code)
-  ? `https://askvodbf.com/play.html?url=${current.url}`
+  ? `https://askvodbf.com/play.html?url=${current.url}&start=${startAt}&t=${startAt}`
   : current.url;
 const related = await relatedCatalogVideos(runtime, vod, 8);
 ---
@@ -52,7 +60,15 @@ const related = await relatedCatalogVideos(runtime, vod, 8);
 
       <section class="rounded-md border border-zinc-800 bg-black">
         {!useIframePlayer ? (
-          <video class="aspect-video w-full bg-black" src={playerUrl} controls playsinline preload="metadata"></video>
+          <video
+            id="videoPlayer"
+            class="aspect-video w-full bg-black"
+            data-src={playerUrl}
+            data-start-at={startAt}
+            controls
+            playsinline
+            preload="metadata"
+          ></video>
         ) : (
           <iframe class="h-[62vh] min-h-[260px] w-full border-0 bg-black" src={playerUrl} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
         )}
@@ -80,5 +96,47 @@ const related = await relatedCatalogVideos(runtime, vod, 8);
         <VideoGrid items={related} />
       </section>
     </main>
+    <script>
+      import Hls from "hls.js/dist/hls.light.mjs";
+
+      const video = document.querySelector<HTMLVideoElement>("#videoPlayer");
+
+      if (video) {
+        const src = video.dataset.src || "";
+        const startAt = Number(video.dataset.startAt || 0);
+        let didSeek = false;
+
+        const seekOnce = () => {
+          if (didSeek || !startAt) return;
+          didSeek = true;
+          try {
+            video.currentTime = startAt;
+          } catch {
+            didSeek = false;
+          }
+        };
+
+        video.addEventListener("loadedmetadata", seekOnce, { once: true });
+        video.addEventListener("canplay", seekOnce, { once: true });
+
+        if (/\.m3u8(\?|$)/i.test(src) && Hls.isSupported()) {
+          const hls = new Hls({
+            enableWorker: true,
+            lowLatencyMode: false
+          });
+          hls.loadSource(src);
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED, seekOnce);
+          hls.on(Hls.Events.ERROR, (_event, data) => {
+            if (data.fatal) {
+              hls.destroy();
+              video.src = src;
+            }
+          });
+        } else {
+          video.src = src;
+        }
+      }
+    </script>
   </body>
 </html>

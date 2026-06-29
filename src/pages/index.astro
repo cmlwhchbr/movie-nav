@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
 import { getCachedTop, topUpdatedAt } from "../lib/top";
-import { listVod } from "../lib/maccms";
+import { detailUrl, listVodAll } from "../lib/maccms";
 import { env } from "../lib/env";
 import TopSection from "../components/TopSection.astro";
 
@@ -15,7 +15,7 @@ let error = "";
 try {
   topList = await getCachedTop(runtime);
   updatedAt = await topUpdatedAt(runtime);
-  latest = await listVod(runtime.MACCMS_API, 1);
+  latest = await listVodAll(runtime, 1);
 } catch (exception) {
   error = exception instanceof Error ? exception.message : "数据读取失败";
 }
@@ -66,14 +66,14 @@ const teleplayTop = topList.filter((item) => item.category === "teleplay" && ite
         <div class="list">
           {latest.map((vod) => (
             <article class="row">
-              <a class="poster-link" href={`/detail/${vod.id}`} aria-label={`查看${vod.name}`}>
+              <a class="poster-link" href={detailUrl(vod)} aria-label={`查看${vod.name}`}>
                 <img class="poster" src={vod.pic || "/favicon.svg"} alt={vod.name} loading="lazy" />
               </a>
               <div>
-                <h3><a href={`/detail/${vod.id}`}>{vod.name}</a></h3>
+                <h3><a href={detailUrl(vod)}>{vod.name}</a></h3>
                 <p class="muted">{vod.type} · {vod.note}</p>
               </div>
-              <a class="btn" href={`/detail/${vod.id}`}>查看</a>
+              <a class="btn" href={detailUrl(vod)}>查看</a>
             </article>
           ))}
         </div>

@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { searchVod } from "../lib/maccms";
+import { detailUrl, searchVodAll } from "../lib/maccms";
 import { env } from "../lib/env";
 
 const runtime = env(Astro);
@@ -10,7 +10,7 @@ let error = "";
 
 if (q.trim()) {
   try {
-    list = await searchVod(runtime.MACCMS_API, q);
+    list = await searchVodAll(runtime, q);
   } catch (exception) {
     error = exception instanceof Error ? exception.message : "搜索失败";
   }
@@ -42,12 +42,14 @@ if (q.trim()) {
       <section class="list">
         {list.map((vod) => (
           <article class="row">
-            <img class="poster" src={vod.pic || "/favicon.svg"} alt={vod.name} loading="lazy" />
+            <a class="poster-link" href={detailUrl(vod)} aria-label={`查看${vod.name}`}>
+              <img class="poster" src={vod.pic || "/favicon.svg"} alt={vod.name} loading="lazy" />
+            </a>
             <div>
-              <h3><a href={`/detail/${vod.id}`}>{vod.name}</a></h3>
-              <p class="muted">{vod.type} · {vod.year} · {vod.note}</p>
+              <h3><a href={detailUrl(vod)}>{vod.name}</a></h3>
+              <p class="muted">源{vod.source + 1} · {vod.type} · {vod.year} · {vod.note}</p>
             </div>
-            <a class="btn" href={`/detail/${vod.id}`}>播放</a>
+            <a class="btn" href={detailUrl(vod)}>播放</a>
           </article>
         ))}
       </section>

@@ -1,11 +1,12 @@
 ---
 import "../../styles/global.css";
-import { getVodDetail } from "../../lib/maccms";
+import { getVodDetailFromSources, playUrl } from "../../lib/maccms";
 import { env } from "../../lib/env";
 
 const runtime = env(Astro);
 const id = Astro.params.id || "";
-const vod = await getVodDetail(runtime.MACCMS_API, id);
+const source = Astro.url.searchParams.has("source") ? Number(Astro.url.searchParams.get("source")) : undefined;
+const vod = await getVodDetailFromSources(runtime, id, source);
 
 if (!vod) {
   return new Response("Not Found", { status: 404 });
@@ -40,7 +41,7 @@ if (!vod) {
           <h2>播放列表</h2>
           <div class="episodes">
             {vod.episodes.map((ep) => (
-              <a href={`/play/${vod.id}/${ep.index}`}>{ep.name}</a>
+              <a href={playUrl(vod, ep.index)}>{ep.name}</a>
             ))}
           </div>
         </div>

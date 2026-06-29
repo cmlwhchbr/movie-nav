@@ -1,6 +1,7 @@
 ---
+import { detailUrl } from "../lib/maccms";
+
 const { title, items } = Astro.props;
-const detailHref = (item) => `/detail/${item.vod.id}`;
 ---
 
 <section>
@@ -13,7 +14,7 @@ const detailHref = (item) => `/detail/${item.vod.id}`;
       <article class="card">
         <a
           class="poster-link"
-          href={detailHref(item)}
+          href={detailUrl(item.vod)}
           aria-label={`查看${item.title}`}
         >
           <img class="poster" src={item.vod?.pic || item.image || "/favicon.svg"} alt={item.title} loading="lazy" />
@@ -21,7 +22,7 @@ const detailHref = (item) => `/detail/${item.vod.id}`;
         <div>
           <div class="rank">#{index + 1} {item.hotScore}</div>
           <h3>
-            <a href={detailHref(item)}>{item.title}</a>
+            <a href={detailUrl(item.vod)}>{item.title}</a>
           </h3>
           <p class="desc">{item.vod?.note || item.desc || "点击搜索站内播放资源"}</p>
         </div>

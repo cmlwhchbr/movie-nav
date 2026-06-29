@@ -1,4 +1,4 @@
-import { searchVod, type VodItem } from "./maccms";
+import { searchVodAll, type VodItem } from "./maccms";
 
 export interface TopItem {
   title: string;
@@ -26,13 +26,12 @@ export async function getCachedTop(env: Env): Promise<TopItem[]> {
 }
 
 export async function refreshTop(env: Env): Promise<TopItem[]> {
-  const api = env.MACCMS_API;
   const merged: TopItem[] = [];
 
   for (const page of TOP_PAGES) {
     const items = await fetchBaiduTopPage(page.url, page.category, page.suffix);
     for (const item of items.slice(0, 12)) {
-      const result = await searchVod(api, item.title);
+      const result = await searchVodAll(env, item.title, 8);
       merged.push({
         ...item,
         vod: result[0] || null

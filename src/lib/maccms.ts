@@ -1,4 +1,4 @@
-import { ddBlocks, textBetween, videoBlocks } from "./xml";
+import { cleanXmlText, ddBlocks, textBetween, videoBlocks } from "./xml";
 
 export interface VodItem {
   id: string;
@@ -143,7 +143,7 @@ export function maccmsApis(env: Pick<Env, "MACCMS_API" | "MACCMS_APIS">): string
 }
 
 function stripTags(value: string): string {
-  return value.replace(/<[^>]+>/g, "").trim();
+  return cleanXmlText(value.replace(/<[^>]+>/g, " "));
 }
 
 function uniqueVod(list: VodItem[]): VodItem[] {

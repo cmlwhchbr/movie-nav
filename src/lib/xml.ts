@@ -10,8 +10,14 @@ export function cleanXmlText(value: string): string {
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&amp;/g, "&")
+    .replace(/&nbsp;/gi, " ")
     .replace(/&quot;/g, "\"")
     .replace(/&#039;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCharCode(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number.parseInt(code, 10)))
+    .replace(/\s+/g, " ")
     .trim();
 }
 

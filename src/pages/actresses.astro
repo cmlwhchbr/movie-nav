@@ -7,10 +7,14 @@ import { env } from "../lib/env";
 
 const runtime = env(Astro);
 const siteName = runtime.SITE_NAME || "成人视频导航";
-const page = Math.max(Number(Astro.url.searchParams.get("page") || 1), 1);
-const limit = 24;
-const offset = (page - 1) * limit;
-const actresses = await listActresses(runtime, { limit, offset, scanLimit: 60000 });
+const [japanActresses, domesticActresses] = await Promise.all([
+  listActresses(runtime, { group: "japan", limit: 160, scanLimit: 60000 }),
+  listActresses(runtime, { group: "domestic", limit: 160, scanLimit: 60000 })
+]);
+const sections = [
+  ["日本女优", japanActresses],
+  ["国产传媒演员", domesticActresses]
+] as const;
 ---
 
 <html lang="zh-CN">
@@ -23,23 +27,19 @@ const actresses = await listActresses(runtime, { limit, offset, scanLimit: 60000
     <Header siteName={siteName} />
     <main class="main-offset page">
       <h1 class="clone-title">女优找片</h1>
-      <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {actresses.map((item) => (
-          <a class="adult-card border border-[#e8c2d2] p-2 hover:border-[#ba4a7b]" href={`/actress/${encodeURIComponent(item.name)}`}>
-            <span class="poster-frame">
-              <img class="poster-img" src={item.pic || "/favicon.svg"} alt={item.name} loading="lazy" />
-            </span>
-            <span class="block p-3">
-              <span class="block truncate font-semibold text-[#ba4a7b]">{item.name}</span>
-              <span class="mt-1 block text-xs text-neutral-500">{item.count} 部相关</span>
-            </span>
-          </a>
-        ))}
-      </div>
-      <div class="mt-7 flex justify-center gap-3">
-        {page > 1 && <a class="pill" href={`/actresses?page=${page - 1}`}>上一页</a>}
-        {actresses.length === limit && <a class="pill" href={`/actresses?page=${page + 1}`}>下一页</a>}
-      </div>
+      {sections.map(([title, items]) => (
+        <section class="keyword-panel">
+          <h2>{title}</h2>
+          <div class="keyword-panel__links">
+            {items.map((item) => (
+              <a href={`/actress/${encodeURIComponent(item.name)}`} title={`${item.name} ${item.count} 部相关`}>
+                {item.name}
+                <span class="ml-1 text-xs opacity-70">{item.count}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
       <KeywordSearchPanel class="mt-10" />
     </main>
   </body>

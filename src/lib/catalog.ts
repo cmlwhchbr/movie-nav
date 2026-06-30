@@ -246,17 +246,27 @@ export async function listActresses(env: Env, options: {
   limit?: number;
   offset?: number;
   scanLimit?: number;
+  group?: "japan" | "domestic";
 } = {}): Promise<ActressItem[]> {
   const limit = Math.min(Math.max(options.limit || 80, 1), 500);
   const offset = Math.max(options.offset || 0, 0);
   const scanLimit = Math.min(Math.max(options.scanLimit || 60000, limit + offset), 60000);
+  const where = ["source_key = 'maccms'", "actor IS NOT NULL", "actor != ''"];
+  const params: unknown[] = [];
+
+  if (options.group === "japan") {
+    addGroupedLike(where, params, ["type", "tags", "name"], ["日本", "女优", "有码", "无码", "JAV", "FC2", "S1", "Prestige", "MOODYZ", "Madonna"]);
+  } else if (options.group === "domestic") {
+    addGroupedLike(where, params, ["type", "tags", "name"], ["国产", "传媒", "麻豆", "天美", "精东", "果冻", "星空", "91", "探花", "皇家华人"]);
+  }
+
   const rows = await env.CATALOG_DB.prepare(`
     SELECT actor, pic
     FROM videos
-    WHERE source_key = 'maccms' AND actor IS NOT NULL AND actor != ''
+    WHERE ${where.join(" AND ")}
     ORDER BY id DESC
     LIMIT ?
-  `).bind(scanLimit).all<{ actor: string; pic: string }>();
+  `).bind(...params, scanLimit).all<{ actor: string; pic: string }>();
 
   const map = new Map<string, ActressItem>();
   for (const row of rows.results || []) {
@@ -437,6 +447,15 @@ function addLike(where: string[], params: unknown[], value: string | undefined, 
   where.push(`(${fields.map((field) => `${field} LIKE ?`).join(" OR ")})`);
   for (let index = 0; index < fields.length; index += 1) {
     params.push(`%${q}%`);
+  }
+}
+
+function addGroupedLike(where: string[], params: unknown[], fields: string[], values: string[]): void {
+  where.push(`(${values.map(() => `(${fields.map((field) => `${field} LIKE ?`).join(" OR ")})`).join(" OR ")})`);
+  for (const value of values) {
+    for (let index = 0; index < fields.length; index += 1) {
+      params.push(`%${value}%`);
+    }
   }
 }
 

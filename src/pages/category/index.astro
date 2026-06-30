@@ -30,7 +30,6 @@ const types = await listCatalogTypes(runtime);
         {types.map((type) => (
           <a class="rounded-md border border-zinc-800 bg-zinc-900 p-4 hover:border-rose-500" href={`/category/${encodeURIComponent(type.type_name)}`}>
             <div class="font-semibold">{type.type_name}</div>
-            <div class="mt-2 text-xs text-zinc-500">ID {type.type_id}</div>
           </a>
         ))}
       </div>

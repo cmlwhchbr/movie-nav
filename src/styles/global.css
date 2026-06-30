@@ -471,21 +471,7 @@
   }
 
   .quick-nav {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    overflow-x: visible;
-    gap: 1px;
-    padding: 0 8px 1px;
-    font-size: 13px;
-  }
-
-  .quick-nav a {
-    min-width: 0;
-    width: 100%;
-    height: 30px;
-    line-height: 30px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: none;
   }
 
   .main-offset {

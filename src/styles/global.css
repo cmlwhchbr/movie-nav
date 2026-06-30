@@ -449,6 +449,10 @@
 }
 
 @media (max-width: 760px) {
+  .site-header {
+    position: sticky;
+  }
+
   .site-header__inner {
     flex-direction: column;
     gap: 6px;
@@ -491,12 +495,12 @@
   }
 
   .main-offset {
-    padding-top: 129px;
+    padding-top: 0;
   }
 
   .hero-clone {
     height: 300px;
-    margin-top: -129px;
+    margin-top: 0;
   }
 
   .hero-clone__slide::after {

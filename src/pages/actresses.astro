@@ -32,9 +32,8 @@ const sections = [
           <h2>{title}</h2>
           <div class="keyword-panel__links">
             {items.map((item) => (
-              <a href={`/actress/${encodeURIComponent(item.name)}`} title={`${item.name} ${item.count} 部相关`}>
+              <a href={`/search?q=${encodeURIComponent(item.name)}`} title={item.name}>
                 {item.name}
-                <span class="ml-1 text-xs opacity-70">{item.count}</span>
               </a>
             ))}
           </div>

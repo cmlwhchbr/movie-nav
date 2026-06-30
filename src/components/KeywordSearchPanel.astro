@@ -1,0 +1,17 @@
+---
+import { safeTags, sceneTags } from "../lib/tags";
+
+const { class: className = "" } = Astro.props as { class?: string };
+const searchTags = safeTags(sceneTags);
+---
+
+<section class={`rounded-md border border-zinc-800 bg-zinc-900 p-5 ${className}`}>
+  <h2 class="mb-3 text-base font-bold text-zinc-200">关键词找片</h2>
+  <div class="flex flex-wrap gap-2">
+    {searchTags.map((tag) => (
+      <a class="rounded border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-zinc-300 hover:border-rose-500 hover:text-white" href={`/search?q=${encodeURIComponent(tag)}`}>
+        {tag}
+      </a>
+    ))}
+  </div>
+</section>

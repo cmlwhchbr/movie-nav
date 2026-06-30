@@ -1,6 +1,7 @@
 ---
 import "../../../styles/global.css";
 import Header from "../../../components/Header.astro";
+import KeywordSearchPanel from "../../../components/KeywordSearchPanel.astro";
 import VideoGrid from "../../../components/VideoGrid.astro";
 import { catalogDetailUrl, catalogPlayUrl, getCatalogVideo, relatedCatalogVideos } from "../../../lib/catalog";
 import { env } from "../../../lib/env";
@@ -159,6 +160,7 @@ function withFailedLines(url: string, failed: number[]): string {
         <h2 class="mb-4 text-xl font-bold">相关推荐</h2>
         <VideoGrid items={related} />
       </section>
+      <KeywordSearchPanel class="mt-10" />
     </main>
     <script>
       import Hls from "hls.js/dist/hls.light.mjs";

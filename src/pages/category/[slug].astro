@@ -1,6 +1,7 @@
 ---
 import "../../styles/global.css";
 import Header from "../../components/Header.astro";
+import KeywordSearchPanel from "../../components/KeywordSearchPanel.astro";
 import VideoGrid from "../../components/VideoGrid.astro";
 import { listCatalogVideos } from "../../lib/catalog";
 import { env } from "../../lib/env";
@@ -38,6 +39,7 @@ const title = slug === "hot" ? "热门播放" : slug === "latest" ? "最新更�
         {page > 1 && <a class="pill" href={`/category/${encodeURIComponent(slug)}?page=${page - 1}`}>上一页</a>}
         {items.length === limit && <a class="pill" href={`/category/${encodeURIComponent(slug)}?page=${page + 1}`}>加载更多</a>}
       </div>
+      <KeywordSearchPanel class="mt-10" />
     </main>
   </body>
 </html>

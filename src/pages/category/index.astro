@@ -1,6 +1,7 @@
 ---
 import "../../styles/global.css";
 import Header from "../../components/Header.astro";
+import KeywordSearchPanel from "../../components/KeywordSearchPanel.astro";
 import { listCatalogTypes } from "../../lib/catalog";
 import { env } from "../../lib/env";
 
@@ -33,6 +34,7 @@ const types = await listCatalogTypes(runtime);
           </a>
         ))}
       </div>
+      <KeywordSearchPanel class="mt-10" />
     </main>
   </body>
 </html>

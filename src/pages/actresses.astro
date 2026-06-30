@@ -22,7 +22,7 @@ const actresses = await listActresses(runtime, { limit, offset, scanLimit: Math.
     <Header siteName={siteName} />
     <main class="page py-6">
       <h1 class="mb-5 text-2xl font-black">女优找片</h1>
-      <div class="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
+      <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
         {actresses.map((item) => (
           <a class="adult-card" href={`/actress/${encodeURIComponent(item.name)}`}>
             <span class="poster-frame aspect-[3/4]">

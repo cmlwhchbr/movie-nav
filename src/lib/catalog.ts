@@ -173,7 +173,7 @@ export async function listCatalogVideos(env: Env, options: {
 
   const orderSql = options.order === "hot"
     ? "hits DESC, source_updated_at DESC, id DESC"
-    : "source_updated_at DESC, id DESC";
+    : "id DESC";
 
   const rows = await env.CATALOG_DB.prepare(`
     SELECT

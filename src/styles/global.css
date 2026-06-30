@@ -598,4 +598,16 @@
     flex-wrap: wrap;
     gap: 10px;
   }
+
+  #refreshRelated {
+    position: fixed;
+    right: 10px;
+    bottom: 92px;
+    z-index: 9996;
+    min-width: 54px;
+    padding: 10px 9px;
+    border-radius: 999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    font-size: 14px;
+  }
 }

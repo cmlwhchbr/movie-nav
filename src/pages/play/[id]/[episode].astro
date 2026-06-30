@@ -166,6 +166,7 @@ function withFailedLines(url: string, failed: number[]): string {
       const relatedSection = document.querySelector<HTMLElement>("[data-related-video-id]");
       const relatedGrid = document.querySelector<HTMLElement>("#relatedGrid");
       const refreshRelated = document.querySelector<HTMLButtonElement>("#refreshRelated");
+      const mobileRelatedQuery = window.matchMedia("(max-width: 520px)");
       let relatedBatch = 0;
 
       if (video) {
@@ -273,6 +274,40 @@ function withFailedLines(url: string, failed: number[]): string {
           window.clearTimeout(startupTimer);
         });
 
+      }
+
+      const setRelatedRefreshVisible = (visible: boolean) => {
+        if (!refreshRelated) return;
+        refreshRelated.classList.toggle("is-visible", visible);
+        if (mobileRelatedQuery.matches) {
+          refreshRelated.setAttribute("aria-hidden", visible ? "false" : "true");
+        } else {
+          refreshRelated.removeAttribute("aria-hidden");
+        }
+      };
+
+      const syncRelatedRefreshVisibility = () => {
+        if (!relatedSection || !refreshRelated) return;
+        if (!mobileRelatedQuery.matches) {
+          setRelatedRefreshVisible(false);
+          return;
+        }
+        const rect = relatedSection.getBoundingClientRect();
+        setRelatedRefreshVisible(rect.top < window.innerHeight * 0.9 && rect.bottom > window.innerHeight * 0.1);
+      };
+
+      if (relatedSection && refreshRelated) {
+        syncRelatedRefreshVisibility();
+        if ("IntersectionObserver" in window) {
+          const observer = new IntersectionObserver((entries) => {
+            setRelatedRefreshVisible(entries.some((entry) => entry.isIntersecting));
+          }, { rootMargin: "0px 0px -15% 0px" });
+          observer.observe(relatedSection);
+          mobileRelatedQuery.addEventListener("change", syncRelatedRefreshVisibility);
+        } else {
+          window.addEventListener("scroll", syncRelatedRefreshVisibility, { passive: true });
+          window.addEventListener("resize", syncRelatedRefreshVisibility);
+        }
       }
 
       const escapeHtml = (value: unknown) => String(value || "")

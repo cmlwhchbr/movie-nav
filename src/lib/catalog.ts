@@ -223,11 +223,12 @@ export async function getCatalogVideo(env: Env, id: string): Promise<CatalogVide
   return video;
 }
 
-export async function relatedCatalogVideos(env: Env, video: CatalogVideo, limit = 12): Promise<CatalogVideo[]> {
+export async function relatedCatalogVideos(env: Env, video: CatalogVideo, limit = 12, offset = 0): Promise<CatalogVideo[]> {
   const keyword = firstToken(video.type || video.tags || video.actor);
-  if (!keyword) return listCatalogVideos(env, { order: "hot", limit });
+  const safeOffset = Math.max(offset, 0);
+  if (!keyword) return listCatalogVideos(env, { order: "hot", limit, offset: safeOffset });
 
-  const rows = await listCatalogVideos(env, { tag: keyword, order: "hot", limit: limit + 1 });
+  const rows = await listCatalogVideos(env, { tag: keyword, order: "hot", limit: limit + 1, offset: safeOffset });
   return rows.filter((item) => item.id !== video.id).slice(0, limit);
 }
 

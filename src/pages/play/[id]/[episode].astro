@@ -142,9 +142,14 @@ function withFailedLines(url: string, failed: number[]): string {
         </div>
       </section>
 
-      <section class="page mt-8">
-        <h2 class="clone-title">相关推荐</h2>
-        <VideoGrid items={related} />
+      <section class="page mt-8" data-related-video-id={vod.source_vod_id}>
+        <div class="section-heading-action">
+          <h2 class="clone-title">相关推荐</h2>
+          <button id="refreshRelated" class="pill" type="button">换一批</button>
+        </div>
+        <div id="relatedGrid">
+          <VideoGrid items={related} />
+        </div>
       </section>
       <KeywordSearchPanel class="mt-10" />
       <footer class="clone-footer">
@@ -158,6 +163,10 @@ function withFailedLines(url: string, failed: number[]): string {
       const video = document.querySelector<HTMLVideoElement>("#videoPlayer");
       const autoSwitchStatus = document.querySelector<HTMLElement>("#autoSwitchStatus");
       const iframeNextLineUrl = autoSwitchStatus?.dataset.nextLineUrl || "";
+      const relatedSection = document.querySelector<HTMLElement>("[data-related-video-id]");
+      const relatedGrid = document.querySelector<HTMLElement>("#relatedGrid");
+      const refreshRelated = document.querySelector<HTMLButtonElement>("#refreshRelated");
+      let relatedBatch = 0;
 
       if (video) {
         const src = video.dataset.src || "";
@@ -265,6 +274,53 @@ function withFailedLines(url: string, failed: number[]): string {
         });
 
       }
+
+      const escapeHtml = (value: unknown) => String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+      const renderRelated = (items: Array<Record<string, unknown>>) => `
+        <div class="video-grid-clone">
+          ${items.map((item) => `
+            <article class="video-card-clone">
+              <a href="${escapeHtml(item.playUrl)}" aria-label="播放${escapeHtml(item.name)}">
+                <img src="${escapeHtml(item.pic || "/favicon.svg")}" alt="${escapeHtml(item.name)}" loading="lazy" />
+              </a>
+              <a href="${escapeHtml(item.playUrl)}">
+                <h3 class="video-card-clone__title">${escapeHtml(item.name)}</h3>
+                <span class="video-card-clone__meta">${escapeHtml(item.type || item.year || "站内资源")}</span>
+                <span class="video-card-clone__meta">${escapeHtml(item.actor || item.area || `播放 ${item.hits || 0}`)}</span>
+              </a>
+            </article>
+          `).join("")}
+        </div>
+      `;
+
+      refreshRelated?.addEventListener("click", async () => {
+        if (!relatedSection || !relatedGrid) return;
+        refreshRelated.disabled = true;
+        refreshRelated.textContent = "加载中";
+        const videoId = relatedSection.dataset.relatedVideoId || "";
+        let nextBatch = relatedBatch + 1;
+        let response = await fetch(`/api/related?id=${encodeURIComponent(videoId)}&batch=${nextBatch}&limit=8`);
+        let payload = await response.json() as { items?: Array<Record<string, unknown>> };
+
+        if (!payload.items?.length && nextBatch !== 0) {
+          nextBatch = 0;
+          response = await fetch(`/api/related?id=${encodeURIComponent(videoId)}&batch=0&limit=8`);
+          payload = await response.json() as { items?: Array<Record<string, unknown>> };
+        }
+
+        if (payload.items?.length) {
+          relatedBatch = nextBatch;
+          relatedGrid.innerHTML = renderRelated(payload.items);
+        }
+
+        refreshRelated.disabled = false;
+        refreshRelated.textContent = "换一批";
+      });
 
     </script>
   </body>

@@ -264,6 +264,23 @@
   text-align: center;
 }
 
+.section-heading-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.section-heading-action .clone-title {
+  padding-top: 0;
+}
+
+.section-heading-action .pill:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .video-card-clone {
   position: relative;
   display: inline-block;
@@ -575,5 +592,10 @@
     min-width: 72px;
     padding: 10px 9px;
     font-size: 15px;
+  }
+
+  .section-heading-action {
+    flex-wrap: wrap;
+    gap: 10px;
   }
 }

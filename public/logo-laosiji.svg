@@ -1,0 +1,42 @@
+<svg width="420" height="112" viewBox="0 0 420 112" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">老司机 laosiji.xyz</title>
+  <desc id="desc">老司机成人视频导航品牌标识</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="420" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#18181B"/>
+      <stop offset="0.48" stop-color="#09090B"/>
+      <stop offset="1" stop-color="#2A0714"/>
+    </linearGradient>
+    <linearGradient id="hot" x1="23" y1="14" x2="128" y2="100" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FB7185"/>
+      <stop offset="0.52" stop-color="#E11D48"/>
+      <stop offset="1" stop-color="#BE123C"/>
+    </linearGradient>
+    <linearGradient id="domain" x1="156" y1="70" x2="358" y2="70" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FDE68A"/>
+      <stop offset="0.48" stop-color="#FB7185"/>
+      <stop offset="1" stop-color="#F472B6"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-35%" width="140%" height="170%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0.95 0 1 0 0 0.08 0 0 1 0 0.25 0 0 0 0.85 0"/>
+      <feBlend in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect width="420" height="112" rx="18" fill="url(#bg)"/>
+  <path d="M26 86C57 103 92 100 124 83" stroke="#FB7185" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+  <path d="M302 22C340 15 373 21 399 41" stroke="#BE123C" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+  <g filter="url(#glow)">
+    <path d="M80 17c-28.7 0-52 23.3-52 52h104c0-28.7-23.3-52-52-52Z" fill="url(#hot)"/>
+    <path d="M33 69h94c-4.5 18-22.8 31-47 31S37.5 87 33 69Z" fill="#E11D48"/>
+    <path d="M62 37c5.6-5.4 12-8.1 18-8.1s12.4 2.7 18 8.1" stroke="white" stroke-width="5" stroke-linecap="round"/>
+    <path d="M58 65c0-12.2 9.9-22 22-22s22 9.8 22 22" stroke="#18181B" stroke-width="7" stroke-linecap="round"/>
+    <path d="M73 54.8v22.4c0 3.9 4.3 6.2 7.5 4l18.1-11.2a4.7 4.7 0 0 0 0-8L80.5 50.8c-3.2-2-7.5.3-7.5 4Z" fill="white"/>
+    <circle cx="52" cy="75" r="7" fill="#18181B"/>
+    <circle cx="108" cy="75" r="7" fill="#18181B"/>
+  </g>
+  <text x="154" y="51" fill="white" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="35" font-weight="900" letter-spacing="1">老司机</text>
+  <text x="156" y="84" fill="url(#domain)" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="31" font-weight="900" letter-spacing="1.2">laosiji.xyz</text>
+  <path d="M154 61h218" stroke="#E11D48" stroke-width="3" stroke-linecap="round" opacity=".72"/>
+  <path d="M334 34h38c8.8 0 16 7.2 16 16v6" stroke="#FB7185" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+</svg>

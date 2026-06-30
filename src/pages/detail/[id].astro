@@ -26,19 +26,20 @@ const related = await relatedCatalogVideos(runtime, vod, 8);
   </head>
   <body>
     <Header siteName={siteName} />
-    <main class="page py-6">
-      <section class="grid gap-5 lg:grid-cols-[320px_1fr]">
-        <img class="aspect-video w-full rounded-md border border-zinc-800 bg-zinc-900 object-cover lg:aspect-[3/4]" src={vod.pic || "/favicon.svg"} alt={vod.name} />
+    <main class="main-offset page">
+      <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
+      <h1 class="view-title">{vod.name}</h1>
+      <section class="mt-6 grid gap-5 lg:grid-cols-[minmax(320px,520px)_1fr]">
+        <img class="aspect-video w-full object-cover shadow-md shadow-black/30" src={vod.pic || "/favicon.svg"} alt={vod.name} />
         <div>
-          <h1 class="text-2xl font-black leading-tight sm:text-3xl">{vod.name}</h1>
-          <div class="mt-3 flex flex-wrap gap-2 text-sm text-zinc-400">
+          <div class="mt-3 flex flex-wrap gap-2 text-sm text-neutral-500">
             {vod.type && <a class="pill" href={`/category/${encodeURIComponent(vod.type)}`}>{vod.type}</a>}
             {vod.year && <span class="pill">{vod.year}</span>}
             {vod.note && <span class="pill">{vod.note}</span>}
             <span class="pill">播放 {vod.hits}</span>
           </div>
-          <p class="mt-4 text-sm leading-7 text-zinc-300">{vod.description || "暂无简介"}</p>
-          <div class="mt-4 grid gap-2 text-sm text-zinc-400">
+          <p class="mt-4 text-sm leading-7 text-neutral-600">{vod.description || "暂无简介"}</p>
+          <div class="mt-4 grid gap-2 text-sm text-neutral-500">
             <p>演员：{vod.actor || "-"}</p>
             <p>导演：{vod.director || "-"}</p>
             <p>地区：{vod.area || "-"}</p>
@@ -47,13 +48,13 @@ const related = await relatedCatalogVideos(runtime, vod, 8);
       </section>
 
       <section class="mt-8">
-        <h2 class="mb-4 text-xl font-bold">播放线路</h2>
+        <h2 class="clone-title">播放线路</h2>
         <div class="space-y-5">
           {(vod.play_sources || []).map((source) => (
-            <div class="rounded-md border border-zinc-800 bg-zinc-900 p-4">
+            <div class="line-panel">
               <div class="mb-3 flex items-center gap-2">
                 <h3 class="font-semibold">线路 {source.source_index + 1}</h3>
-                <span class="text-sm text-zinc-500">{source.source_code}</span>
+                <span class="text-sm text-neutral-500">{source.source_code}</span>
               </div>
               <div class="flex flex-wrap gap-2">
                 {source.episodes.map((ep) => (
@@ -66,9 +67,13 @@ const related = await relatedCatalogVideos(runtime, vod, 8);
       </section>
 
       <section class="mt-8">
-        <h2 class="mb-4 text-xl font-bold">相关推荐</h2>
+        <h2 class="clone-title">相关推荐</h2>
         <VideoGrid items={related} />
       </section>
+      <footer class="clone-footer">
+        <a href="/">老司机 laosiji.xyz</a>
+        <p>每日更新影视资源导航</p>
+      </footer>
     </main>
   </body>
 </html>

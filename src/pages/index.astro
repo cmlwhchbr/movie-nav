@@ -17,11 +17,11 @@ const hotSearchTerms = ["国产主播", "黑料吃瓜", "抖阴短片", "91探�
 
 try {
   [latest, domestic, gossip, japanKorea, hot] = await Promise.all([
-    listCatalogVideos(runtime, { order: "latest", limit: 4 }),
-    listCatalogVideos(runtime, { type: "国产", order: "latest", limit: 8 }),
-    listCatalogVideos(runtime, { tag: "黑料", order: "latest", limit: 8 }),
-    listCatalogVideos(runtime, { type: "日韩", order: "latest", limit: 8 }),
-    listCatalogVideos(runtime, { order: "hot", limit: 8 })
+    listCatalogVideos(runtime, { order: "latest", limit: 18 }),
+    listCatalogVideos(runtime, { type: "国产", order: "latest", limit: 9 }),
+    listCatalogVideos(runtime, { tag: "黑料", order: "latest", limit: 9 }),
+    listCatalogVideos(runtime, { type: "日韩", order: "latest", limit: 9 }),
+    listCatalogVideos(runtime, { order: "hot", limit: 9 })
   ]);
 } catch (exception) {
   error = exception instanceof Error ? exception.message : "数据读取失败";
@@ -37,61 +37,68 @@ try {
   </head>
   <body>
     <Header siteName={siteName} />
-    <main class="page py-6">
-      <section class="mb-8">
-        <form class="mx-auto grid max-w-3xl grid-cols-[1fr_auto] gap-2 rounded-md border border-zinc-800 bg-zinc-900/90 p-2 shadow-2xl shadow-black/30 focus-within:border-rose-500" action="/search">
-          <input class="min-w-0 rounded bg-zinc-950 px-4 py-4 text-base text-white outline-none placeholder:text-zinc-500" name="q" placeholder="搜索片名、女优、番号、标签" />
-          <button class="rounded bg-rose-600 px-6 py-4 text-base font-bold text-white hover:bg-rose-500">搜索</button>
+    <main class="main-offset">
+      <section class="hero-clone" aria-label="推荐横幅">
+        <a class="hero-clone__slide" href="/category/latest"></a>
+        <a class="hero-clone__slide" href="/category/hot"></a>
+        <a class="hero-clone__slide" href="/actresses"></a>
+      </section>
+      <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
+
+      <section class="page">
+        <form class="mx-auto grid max-w-3xl grid-cols-[1fr_auto] gap-0 overflow-hidden rounded-md border border-[#ba4a7b] bg-white shadow-md" action="/search">
+          <input class="min-w-0 px-4 py-3 text-base text-neutral-700 outline-none placeholder:text-neutral-400" name="q" placeholder="搜索片名、女优、番号、标签" />
+          <button class="bg-[#ba4a7b] px-6 py-3 text-base font-bold text-white hover:bg-[#a23b6b]">搜寻</button>
         </form>
         <div class="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-2">
           {hotSearchTerms.map((term) => (
-            <a class="rounded border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300 hover:border-rose-500 hover:text-white" href={`/search?q=${encodeURIComponent(term)}`}>
+            <a class="rounded border border-[#ba4a7b] bg-white px-3 py-2 text-sm text-[#ba4a7b] hover:bg-[#ba4a7b] hover:text-white" href={`/search?q=${encodeURIComponent(term)}`}>
               {term}
             </a>
           ))}
         </div>
-        {error && <p class="mt-3 text-center text-sm text-red-400">数据读取失败：{error}</p>}
+        {error && <p class="mt-3 text-center text-sm text-red-600">数据读取失败：{error}</p>}
       </section>
 
-      <section class="mb-9">
-        <div class="mb-3 flex items-end justify-between gap-3">
-          <h2 class="text-xl font-bold">最新更新</h2>
-          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/latest">更多</a>
-        </div>
+      <section class="page">
+        <h1 class="clone-title">推荐影片</h1>
+        <div class="clone-more"><a href="/category/hot">所有热门影片&gt;&gt;</a></div>
+        <VideoGrid items={hot} />
+      </section>
+
+      <section class="clone-banner">
+        <span class="clone-banner__name">老司机 laosiji.xyz</span>
+        <span class="clone-banner__line">每日更新 D1 资源库 <a class="clone-banner__button" href="/category/latest">&gt;&gt;</a></span>
+      </section>
+
+      <section class="page">
+        <h2 class="clone-title">所有最新影片:</h2>
+        <div class="clone-more"><a href="/category/latest">更多最新影片&gt;&gt;</a></div>
         <VideoGrid items={latest} />
       </section>
 
-      <section class="mb-9">
-        <div class="mb-3 flex items-end justify-between gap-3">
-          <h2 class="text-xl font-bold">国产</h2>
-          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/国产">更多</a>
-        </div>
+      <section class="page">
+        <h2 class="clone-title">国产</h2>
+        <div class="clone-more"><a href="/category/国产">所有国产影片&gt;&gt;</a></div>
         <VideoGrid items={domestic} />
       </section>
 
-      <section class="mb-9">
-        <div class="mb-3 flex items-end justify-between gap-3">
-          <h2 class="text-xl font-bold">黑料吃瓜</h2>
-          <a class="text-sm text-rose-400 hover:text-rose-300" href="/tag/黑料">更多</a>
-        </div>
+      <section class="page">
+        <h2 class="clone-title">黑料吃瓜</h2>
+        <div class="clone-more"><a href="/tag/黑料">所有黑料吃瓜影片&gt;&gt;</a></div>
         <VideoGrid items={gossip} />
       </section>
 
-      <section class="mb-9">
-        <div class="mb-3 flex items-end justify-between gap-3">
-          <h2 class="text-xl font-bold">日韩</h2>
-          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/日韩">更多</a>
-        </div>
+      <section class="page">
+        <h2 class="clone-title">日韩</h2>
+        <div class="clone-more"><a href="/category/日韩">所有日韩影片&gt;&gt;</a></div>
         <VideoGrid items={japanKorea} />
       </section>
 
-      <section class="mb-9">
-        <div class="mb-3 flex items-end justify-between gap-3">
-          <h2 class="text-xl font-bold">热门</h2>
-          <a class="text-sm text-rose-400 hover:text-rose-300" href="/category/hot">更多</a>
-        </div>
-        <VideoGrid items={hot} />
-      </section>
+      <footer class="clone-footer">
+        <a href="/">老司机 laosiji.xyz</a>
+        <p>每日更新影视资源导航</p>
+      </footer>
     </main>
   </body>
 </html>

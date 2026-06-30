@@ -31,28 +31,24 @@ if (q.trim()) {
   </head>
   <body>
     <Header siteName={siteName} />
-    <main class="page py-6">
+    <main class="main-offset page">
       {!q.trim() ? (
-        <section class="mb-6 rounded-md border border-zinc-800 bg-zinc-900 p-5">
-          <h1 class="mb-4 text-2xl font-black">搜索</h1>
-          <form class="grid grid-cols-[1fr_auto] gap-2" action="/search">
-            <input class="min-w-0 rounded border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm outline-none focus:border-rose-500" name="q" value={q} placeholder="输入片名、女优、番号、标签" />
-            <button class="rounded bg-rose-600 px-5 py-3 text-sm font-semibold text-white hover:bg-rose-500">搜索</button>
+        <section>
+          <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
+          <h1 class="clone-title">搜索</h1>
+          <form class="mx-auto grid max-w-3xl grid-cols-[1fr_auto] gap-0 overflow-hidden rounded-md border border-[#ba4a7b] bg-white shadow-md" action="/search">
+            <input class="min-w-0 px-4 py-3 text-base text-neutral-700 outline-none placeholder:text-neutral-400" name="q" value={q} placeholder="输入片名、女优、番号、标签" />
+            <button class="bg-[#ba4a7b] px-6 py-3 text-sm font-semibold text-white hover:bg-[#a23b6b]">搜寻</button>
           </form>
-          <KeywordSearchPanel class="mt-5 border-0 bg-transparent p-0" />
-          {error && <p class="mt-3 text-sm text-red-400">搜索失败：{error}</p>}
+          <KeywordSearchPanel />
+          {error && <p class="mt-3 text-sm text-red-600">搜索失败：{error}</p>}
         </section>
       ) : (
-        <section class="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-md border border-zinc-800 bg-zinc-900 px-4 py-3">
-          <div>
-            <p class="text-sm text-zinc-500">当前搜索词</p>
-            <h1 class="text-xl font-bold text-white">{q}</h1>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <a class="pill" href="/search">返回搜索词</a>
-            <a class="pill" href="/tags">关键词找片</a>
-          </div>
-          {error && <p class="w-full text-sm text-red-400">搜索失败：{error}</p>}
+        <section>
+          <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
+          <h1 class="clone-title">搜索：{q}</h1>
+          <div class="clone-more"><a href="/search">返回搜索词&gt;&gt;</a></div>
+          {error && <p class="w-full text-sm text-red-600">搜索失败：{error}</p>}
         </section>
       )}
       <VideoGrid items={list} />

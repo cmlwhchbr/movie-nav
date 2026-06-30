@@ -22,8 +22,9 @@ const items = await listCatalogVideos(runtime, { actor: name, order: "latest", l
   </head>
   <body>
     <Header siteName={siteName} />
-    <main class="page py-6">
-      <h1 class="mb-5 text-2xl font-black">{name}</h1>
+    <main class="main-offset page">
+      <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
+      <h1 class="clone-title">{name}:</h1>
       <VideoGrid items={items} />
       <div class="mt-7 flex justify-center gap-3">
         {page > 1 && <a class="pill" href={`/actress/${encodeURIComponent(name)}?page=${page - 1}`}>上一页</a>}

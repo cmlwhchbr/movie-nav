@@ -1,14 +1,23 @@
-<header class="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur">
-  <div class="page relative flex min-h-18 flex-col items-center justify-center gap-3 py-3 md:flex-row">
-    <a class="md:absolute md:left-0" href="/" aria-label="老司机 laosiji.xyz">
-      <img class="h-14 w-auto max-w-[250px] md:h-16 md:max-w-[270px]" src="/logo-laosiji.svg" alt="老司机 laosiji.xyz" />
+---
+const quickTerms = ["国产主播", "黑料吃瓜", "抖阴短片", "91探花", "学生少女", "高潮喷水", "麻豆", "果冻", "制服", "人妻", "巨乳", "黑丝", "素人", "探花", "日韩", "中文字幕"];
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-header__brand" href="/" aria-label="老司机 laosiji.xyz">
+      <img src="/logo-laosiji.svg" alt="老司机 laosiji.xyz" />
     </a>
-    <nav class="flex flex-wrap items-center justify-center gap-4 text-base font-semibold text-zinc-200 md:gap-8 md:text-lg">
-      <a class="rounded px-1 py-2 hover:text-rose-300" href="/">首页</a>
-      <a class="rounded px-1 py-2 hover:text-rose-300" href="/category">分类找片</a>
-      <a class="rounded px-1 py-2 hover:text-rose-300" href="/actresses">女优找片</a>
-      <a class="rounded px-1 py-2 hover:text-rose-300" href="/tags">关键词找片</a>
-      <a class="rounded px-1 py-2 hover:text-rose-300" href="/search">搜索</a>
+    <nav class="site-header__nav" aria-label="主导航">
+      <a href="/">首页</a>
+      <a href="/category">分类找片</a>
+      <a href="/actresses">女优找片</a>
+      <a href="/tags">关键词找片</a>
+      <a href="/search">搜索</a>
     </nav>
   </div>
+  <nav class="quick-nav" aria-label="热门搜索词">
+    {quickTerms.map((term) => (
+      <a href={`/search?q=${encodeURIComponent(term)}`}>{term}</a>
+    ))}
+  </nav>
 </header>

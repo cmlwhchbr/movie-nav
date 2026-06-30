@@ -21,17 +21,18 @@ const actresses = await listActresses(runtime, { limit, offset, scanLimit: Math.
   </head>
   <body>
     <Header siteName={siteName} />
-    <main class="page py-6">
-      <h1 class="mb-5 text-2xl font-black">女优找片</h1>
+    <main class="main-offset page">
+      <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
+      <h1 class="clone-title">女优找片</h1>
       <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
         {actresses.map((item) => (
-          <a class="adult-card" href={`/actress/${encodeURIComponent(item.name)}`}>
+          <a class="adult-card border border-[#e8c2d2] p-2 hover:border-[#ba4a7b]" href={`/actress/${encodeURIComponent(item.name)}`}>
             <span class="poster-frame">
               <img class="poster-img" src={item.pic || "/favicon.svg"} alt={item.name} loading="lazy" />
             </span>
             <span class="block p-3">
-              <span class="block truncate font-semibold">{item.name}</span>
-              <span class="mt-1 block text-xs text-zinc-500">{item.count} 部相关</span>
+              <span class="block truncate font-semibold text-[#ba4a7b]">{item.name}</span>
+              <span class="mt-1 block text-xs text-neutral-500">{item.count} 部相关</span>
             </span>
           </a>
         ))}

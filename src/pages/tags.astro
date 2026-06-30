@@ -22,15 +22,16 @@ const sections = [
   </head>
   <body>
     <Header siteName={siteName} />
-    <main class="page py-6">
-      <h1 class="mb-5 text-2xl font-black">关键词找片</h1>
+    <main class="main-offset page">
+      <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
+      <h1 class="clone-title">关键词找片</h1>
       {sections.map(([title, tags]) => (
-        <section class="mb-8">
-          <div class="mb-3 flex items-center gap-3">
-            <h2 class="text-xl font-bold">{title}</h2>
-            <span class="text-sm text-zinc-500">{tags.length}</span>
+        <section class="keyword-panel">
+          <div class="mb-3 flex items-center justify-center gap-3">
+            <h2>{title}</h2>
+            <span class="text-sm text-neutral-500">{tags.length}</span>
           </div>
-          <div class="flex flex-wrap gap-2">
+          <div class="keyword-panel__links">
             {tags.map((tag) => <a class="pill" href={`/tag/${encodeURIComponent(tag)}`}>{tag}</a>)}
           </div>
         </section>

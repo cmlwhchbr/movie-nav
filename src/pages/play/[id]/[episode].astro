@@ -97,23 +97,18 @@ function withFailedLines(url: string, failed: number[]): string {
   </head>
   <body>
     <Header siteName={siteName} />
-    <main class="page py-6">
-      <section class="mb-5">
-        <div class="mb-3 flex flex-wrap items-center gap-2 text-sm text-zinc-400">
-          <a class="hover:text-white" href={catalogDetailUrl(vod)}>详情</a>
-          <span>/</span>
-          <span>线路 {source.source_index + 1}</span>
-          <span>/</span>
-          <span>{current.name}</span>
-        </div>
-        <h1 class="text-2xl font-black">{vod.name}</h1>
+    <main class="main-offset">
+      <section class="page">
+        <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
+        <div class="clone-more"><a href={catalogDetailUrl(vod)}>影片详情&gt;&gt;</a></div>
+        <h1 class="view-title">{vod.name}</h1>
+        <div class="play-button-clone"><span>在线播放</span></div>
       </section>
 
-      <section class="mx-auto max-w-5xl rounded-md border border-zinc-800 bg-black">
+      <section class="player-shell">
         {!useIframePlayer ? (
           <video
             id="videoPlayer"
-            class="aspect-video w-full bg-black"
             data-src={playerUrl}
             data-start-at={startAt}
             data-fallback-src={fallbackParserUrl}
@@ -123,44 +118,49 @@ function withFailedLines(url: string, failed: number[]): string {
             preload="metadata"
           ></video>
         ) : (
-          <iframe class="aspect-video min-h-[260px] w-full border-0 bg-black" src={playerUrl} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+          <iframe src={playerUrl} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
         )}
       </section>
       {nextLineUrl && (
-        <p id="autoSwitchStatus" class="mt-2 text-sm text-zinc-500" data-next-line-url={nextLineUrl}>
+        <p id="autoSwitchStatus" class="mx-auto mt-2 w-[min(1120px,calc(100%-20px))] text-sm text-neutral-500" data-next-line-url={nextLineUrl}>
           当前线路卡顿或无法播放时会自动切换下一线路
         </p>
       )}
-      <div class="mt-3 flex flex-wrap gap-2">
+      <div class="mx-auto mt-3 flex w-[min(1120px,calc(100%-20px))] flex-wrap justify-center gap-2">
         {searchTerms.map((term) => (
-          <a class="rounded border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-300 hover:border-rose-500 hover:text-white" href={`/search?q=${encodeURIComponent(term)}`}>
+          <a class="pill" href={`/search?q=${encodeURIComponent(term)}`}>
             {term}
           </a>
         ))}
       </div>
 
-      <section class="mt-5 rounded-md border border-zinc-800 bg-zinc-900 p-4">
-        <div class="mb-3 flex flex-wrap gap-2">
+      <section class="line-panel">
+        <div class="line-panel__title">线路选择</div>
+        <div class="line-panel__links mb-3">
           {(vod.play_sources || []).map((item) => (
-            <a class={`pill ${item.source_index === source.source_index ? "border-rose-500 text-white" : ""}`} href={catalogPlayUrl(vod, item.source_index, item.episodes[0]?.episode_index || 0)}>
+            <a class={`pill ${item.source_index === source.source_index ? "bg-[#ba4a7b] text-white" : ""}`} href={catalogPlayUrl(vod, item.source_index, item.episodes[0]?.episode_index || 0)}>
               线路 {item.source_index + 1} {item.source_code}
             </a>
           ))}
         </div>
-        <div class="flex flex-wrap gap-2">
+        <div class="line-panel__links">
           {source.episodes.map((ep) => (
-            <a class={`pill ${ep.episode_index === current.episode_index ? "border-rose-500 text-white" : ""}`} href={catalogPlayUrl(vod, source.source_index, ep.episode_index)}>
+            <a class={`pill ${ep.episode_index === current.episode_index ? "bg-[#ba4a7b] text-white" : ""}`} href={catalogPlayUrl(vod, source.source_index, ep.episode_index)}>
               {ep.name}
             </a>
           ))}
         </div>
       </section>
 
-      <section class="mt-8">
-        <h2 class="mb-4 text-xl font-bold">相关推荐</h2>
+      <section class="page mt-8">
+        <h2 class="clone-title">相关推荐</h2>
         <VideoGrid items={related} />
       </section>
       <KeywordSearchPanel class="mt-10" />
+      <footer class="clone-footer">
+        <a href="/">老司机 laosiji.xyz</a>
+        <p>每日更新影视资源导航</p>
+      </footer>
     </main>
     <script>
       import Hls from "hls.js/dist/hls.light.mjs";

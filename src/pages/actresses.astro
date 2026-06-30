@@ -21,14 +21,21 @@ const sections = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>女优找片 - {siteName}</title>
+    <title>演员找片 - {siteName}</title>
   </head>
   <body>
     <Header siteName={siteName} />
     <main class="main-offset page">
-      <h1 class="clone-title">女优找片</h1>
-      {sections.map(([title, items]) => (
-        <section class="keyword-panel">
+      <h1 class="clone-title">演员找片</h1>
+      <div class="actor-tabs" role="tablist" aria-label="演员分类">
+        {sections.map(([title], index) => (
+          <button class={`actor-tab ${index === 0 ? "is-active" : ""}`} type="button" role="tab" aria-selected={index === 0 ? "true" : "false"} data-actor-tab={String(index)}>
+            {title}
+          </button>
+        ))}
+      </div>
+      {sections.map(([title, items], index) => (
+        <section class={`keyword-panel actor-panel ${index === 0 ? "is-active" : ""}`} data-actor-panel={String(index)}>
           <h2>{title}</h2>
           <div class="keyword-panel__links">
             {items.map((item) => (
@@ -41,5 +48,23 @@ const sections = [
       ))}
       <KeywordSearchPanel class="mt-10" />
     </main>
+    <script>
+      const tabs = [...document.querySelectorAll<HTMLButtonElement>("[data-actor-tab]")];
+      const panels = [...document.querySelectorAll<HTMLElement>("[data-actor-panel]")];
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.actorTab || "0";
+          tabs.forEach((item) => {
+            const active = item.dataset.actorTab === target;
+            item.classList.toggle("is-active", active);
+            item.setAttribute("aria-selected", active ? "true" : "false");
+          });
+          panels.forEach((panel) => {
+            panel.classList.toggle("is-active", panel.dataset.actorPanel === target);
+          });
+        });
+      });
+    </script>
   </body>
 </html>

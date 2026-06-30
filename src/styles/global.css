@@ -344,6 +344,45 @@
   background: #ba4a7b;
 }
 
+.actor-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin: 18px auto 8px;
+}
+
+.actor-tab {
+  min-width: 150px;
+  padding: 12px 22px;
+  border: 1px solid #ba4a7b;
+  color: #ba4a7b;
+  background: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.actor-tab:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.actor-tab:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.actor-tab.is-active {
+  color: #fff;
+  background: #ba4a7b;
+}
+
+.actor-panel {
+  display: none;
+}
+
+.actor-panel.is-active {
+  display: block;
+}
+
 .clone-footer {
   min-height: 125px;
   margin-top: 50px;

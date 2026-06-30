@@ -512,9 +512,15 @@
   }
 
   .site-header__nav {
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 14px;
-    font-size: 14px;
+    gap: 10px 18px;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .site-header__nav a {
+    padding: 6px 0;
   }
 
   .quick-nav {
@@ -550,8 +556,8 @@
   }
 
   .site-header__nav {
-    gap: 10px;
-    font-size: 13px;
+    gap: 8px 14px;
+    font-size: 16px;
   }
 
   .video-card-clone {

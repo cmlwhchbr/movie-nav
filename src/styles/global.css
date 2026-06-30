@@ -383,6 +383,14 @@
   display: block;
 }
 
+.tag-tabs {
+  max-width: 620px;
+}
+
+.tag-tab {
+  min-width: 110px;
+}
+
 .clone-footer {
   min-height: 125px;
   margin-top: 50px;
@@ -555,5 +563,11 @@
   .play-button-clone span {
     padding: 8px 46px;
     font-size: 20px;
+  }
+
+  .tag-tab {
+    min-width: 72px;
+    padding: 10px 9px;
+    font-size: 15px;
   }
 }

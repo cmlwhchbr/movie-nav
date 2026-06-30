@@ -7,10 +7,10 @@ import { hotTags, makerTags, safeTags, sceneTags, specialTags } from "../lib/tag
 const runtime = env(Astro);
 const siteName = runtime.SITE_NAME || "成人视频导航";
 const sections = [
-  ["场景标签", safeTags(sceneTags)],
-  ["制片商标签", safeTags(makerTags)],
-  ["热门标签", safeTags(hotTags)],
-  ["专题标签", safeTags(specialTags)]
+  ["场景", safeTags(sceneTags)],
+  ["制片商", safeTags(makerTags)],
+  ["热门", safeTags(hotTags)],
+  ["专题", safeTags(specialTags)]
 ];
 ---
 
@@ -24,8 +24,15 @@ const sections = [
     <Header siteName={siteName} />
     <main class="main-offset page">
       <h1 class="clone-title">关键词找片</h1>
-      {sections.map(([title, tags]) => (
-        <section class="keyword-panel">
+      <div class="actor-tabs tag-tabs" role="tablist" aria-label="关键词分类">
+        {sections.map(([title], index) => (
+          <button class={`actor-tab tag-tab ${index === 0 ? "is-active" : ""}`} type="button" role="tab" aria-selected={index === 0 ? "true" : "false"} data-tag-tab={String(index)}>
+            {title}
+          </button>
+        ))}
+      </div>
+      {sections.map(([title, tags], index) => (
+        <section class={`keyword-panel actor-panel ${index === 0 ? "is-active" : ""}`} data-tag-panel={String(index)}>
           <div class="mb-3 flex items-center justify-center gap-3">
             <h2>{title}</h2>
             <span class="text-sm text-neutral-500">{tags.length}</span>
@@ -36,5 +43,23 @@ const sections = [
         </section>
       ))}
     </main>
+    <script>
+      const tabs = [...document.querySelectorAll<HTMLButtonElement>("[data-tag-tab]")];
+      const panels = [...document.querySelectorAll<HTMLElement>("[data-tag-panel]")];
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.tagTab || "0";
+          tabs.forEach((item) => {
+            const active = item.dataset.tagTab === target;
+            item.classList.toggle("is-active", active);
+            item.setAttribute("aria-selected", active ? "true" : "false");
+          });
+          panels.forEach((panel) => {
+            panel.classList.toggle("is-active", panel.dataset.tagPanel === target);
+          });
+        });
+      });
+    </script>
   </body>
 </html>

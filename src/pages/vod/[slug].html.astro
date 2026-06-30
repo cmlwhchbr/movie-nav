@@ -1,17 +1,21 @@
 ---
-import "../../../styles/global.css";
-import Header from "../../../components/Header.astro";
-import VideoGrid from "../../../components/VideoGrid.astro";
-import { catalogDetailUrl, catalogPlayUrl, getCatalogVideo, relatedCatalogVideos } from "../../../lib/catalog";
-import { env } from "../../../lib/env";
-import { isDirectVideo } from "../../../lib/maccms";
-import { safeTags, sceneTags } from "../../../lib/tags";
+import "../../styles/global.css";
+import Header from "../../components/Header.astro";
+import VideoGrid from "../../components/VideoGrid.astro";
+import { catalogDetailUrl, catalogPlayUrl, getCatalogVideo, relatedCatalogVideos } from "../../lib/catalog";
+import { env } from "../../lib/env";
+import { isDirectVideo } from "../../lib/maccms";
+import { safeTags, sceneTags } from "../../lib/tags";
 
 const runtime = env(Astro);
 const siteName = runtime.SITE_NAME || "成人视频导航";
-const id = Astro.params.id || "";
-const episodeIndex = Number(Astro.params.episode || 0);
-const line = Number(Astro.url.searchParams.get("line") || 0);
+const slug = Astro.params.slug || "";
+const slugParts = slug.split("-");
+const episodeNumber = Number(slugParts.pop() || 1);
+const lineNumber = Number(slugParts.pop() || 1);
+const id = slugParts.join("-");
+const episodeIndex = Math.max(episodeNumber - 1, 0);
+const line = Math.max(lineNumber - 1, 0);
 const vod = await getCatalogVideo(runtime, id);
 
 if (!vod) {

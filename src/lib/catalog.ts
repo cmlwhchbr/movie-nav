@@ -279,7 +279,7 @@ export function catalogDetailUrl(video: Pick<CatalogVideo, "source_vod_id">): st
 }
 
 export function catalogPlayUrl(video: Pick<CatalogVideo, "source_vod_id">, sourceIndex: number, episodeIndex: number): string {
-  return `/play/${encodeURIComponent(video.source_vod_id)}/${episodeIndex}?source=maccms&line=${sourceIndex}`;
+  return `/vod/${encodeURIComponent(video.source_vod_id)}-${sourceIndex + 1}-${episodeIndex + 1}.html`;
 }
 
 export function catalogPrimaryPlayUrl(video: Pick<CatalogVideo, "source_vod_id" | "first_source_index" | "first_episode_index">): string {

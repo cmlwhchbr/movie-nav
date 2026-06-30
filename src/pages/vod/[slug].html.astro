@@ -106,7 +106,6 @@ function withFailedLines(url: string, failed: number[]): string {
         <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
         <div class="clone-more"><a href={catalogDetailUrl(vod)}>影片详情&gt;&gt;</a></div>
         <h1 class="view-title">{vod.name}</h1>
-        <div class="play-button-clone"><span>在线播放</span></div>
       </section>
 
       <section class="player-shell">
@@ -144,13 +143,6 @@ function withFailedLines(url: string, failed: number[]): string {
           {(vod.play_sources || []).map((item) => (
             <a class={`pill ${item.source_index === source.source_index ? "bg-[#ba4a7b] text-white" : ""}`} href={catalogPlayUrl(vod, item.source_index, item.episodes[0]?.episode_index || 0)}>
               线路 {item.source_index + 1} {item.source_code}
-            </a>
-          ))}
-        </div>
-        <div class="line-panel__links">
-          {source.episodes.map((ep) => (
-            <a class={`pill ${ep.episode_index === current.episode_index ? "bg-[#ba4a7b] text-white" : ""}`} href={catalogPlayUrl(vod, source.source_index, ep.episode_index)}>
-              {ep.name}
             </a>
           ))}
         </div>

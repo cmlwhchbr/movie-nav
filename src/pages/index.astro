@@ -21,7 +21,7 @@ try {
     listCatalogVideos(runtime, { type: "国产", order: "latest", limit: 9 }),
     listCatalogVideos(runtime, { tag: "黑料", order: "latest", limit: 9 }),
     listCatalogVideos(runtime, { type: "日韩", order: "latest", limit: 9 }),
-    listCatalogVideos(runtime, { order: "hot", limit: 9 })
+    listCatalogVideos(runtime, { type: "国产", order: "hot", limit: 9 })
   ]);
 } catch (exception) {
   error = exception instanceof Error ? exception.message : "数据读取失败";
@@ -55,7 +55,7 @@ try {
 
       <section class="page">
         <h1 class="clone-title">推荐影片</h1>
-        <div class="clone-more"><a href="/category/hot">所有热门影片&gt;&gt;</a></div>
+        <div class="clone-more"><a href="/category/国产">所有国产影片&gt;&gt;</a></div>
         <VideoGrid items={hot} />
       </section>
 

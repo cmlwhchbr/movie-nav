@@ -10,7 +10,7 @@ const siteName = runtime.SITE_NAME || "成人视频导航";
 const page = Math.max(Number(Astro.url.searchParams.get("page") || 1), 1);
 const limit = 24;
 const offset = (page - 1) * limit;
-const actresses = await listActresses(runtime, { limit, offset, scanLimit: Math.max(12000, (page + 1) * limit * 80) });
+const actresses = await listActresses(runtime, { limit, offset, scanLimit: 60000 });
 ---
 
 <html lang="zh-CN">

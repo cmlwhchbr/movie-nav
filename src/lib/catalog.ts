@@ -249,12 +249,12 @@ export async function listActresses(env: Env, options: {
 } = {}): Promise<ActressItem[]> {
   const limit = Math.min(Math.max(options.limit || 80, 1), 500);
   const offset = Math.max(options.offset || 0, 0);
-  const scanLimit = Math.min(Math.max(options.scanLimit || 12000, limit + offset), 60000);
+  const scanLimit = Math.min(Math.max(options.scanLimit || 60000, limit + offset), 60000);
   const rows = await env.CATALOG_DB.prepare(`
     SELECT actor, pic
     FROM videos
     WHERE source_key = 'maccms' AND actor IS NOT NULL AND actor != ''
-    ORDER BY source_updated_at DESC, id DESC
+    ORDER BY id DESC
     LIMIT ?
   `).bind(scanLimit).all<{ actor: string; pic: string }>();
 
@@ -444,7 +444,15 @@ function splitNames(value: string): string[] {
   return value
     .split(/[,，/、\s]+/)
     .map((item) => item.trim())
-    .filter((item) => item.length >= 2 && item.length <= 24 && !/未知|匿名|佚名|演员/.test(item));
+    .filter(isActressName);
+}
+
+function isActressName(value: string): boolean {
+  if (value.length < 2 || value.length > 24) return false;
+  if (/未知|匿名|佚名|演员|主播|先生|女士|亚洲|欧美|国产|日本|韩国|无码|有码|高清|中字|中文字幕|合集|精选|原创|自拍/i.test(value)) return false;
+  if (/^(asian|amateur|unknown|fc2|jav|hd|vr)$/i.test(value)) return false;
+  if (/^\d+$/.test(value)) return false;
+  return true;
 }
 
 function firstToken(value: string): string {

@@ -30,7 +30,7 @@
     }
   ],
   "vars": {
-    "SITE_NAME": "成人视频导航",
+    "SITE_NAME": "老司机",
     "MACCMS_API": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/xml/",
     "MACCMS_APIS": "http://caiji.dyttzyapi.com/api.php/provide/vod/from/dyttm3u8/at/xml/\nhttps://caiji.dbzy5.com/api.php/provide/vod/from/dbm3u8/at/xml/\nhttps://www.iqiyizyapi.com/api.php/provide/vod/at/xml/\nhttps://aosikazy1.com/api.php/provide/vod/at/xml",
     "TOP_CACHE_KEY": "baidu-top-v1",

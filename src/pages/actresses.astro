@@ -25,7 +25,7 @@ const actresses = await listActresses(runtime, { limit, offset, scanLimit: Math.
       <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
         {actresses.map((item) => (
           <a class="adult-card" href={`/actress/${encodeURIComponent(item.name)}`}>
-            <span class="poster-frame aspect-[3/4]">
+            <span class="poster-frame">
               <img class="poster-img" src={item.pic || "/favicon.svg"} alt={item.name} loading="lazy" />
             </span>
             <span class="block p-3">

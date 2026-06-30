@@ -34,7 +34,6 @@ if (q.trim()) {
     <main class="main-offset page">
       {!q.trim() ? (
         <section>
-          <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
           <h1 class="clone-title">搜索</h1>
           <form class="mx-auto grid max-w-3xl grid-cols-[1fr_auto] gap-0 overflow-hidden rounded-md border border-[#ba4a7b] bg-white shadow-md" action="/search">
             <input class="min-w-0 px-4 py-3 text-base text-neutral-700 outline-none placeholder:text-neutral-400" name="q" value={q} placeholder="输入片名、女优、番号、标签" />
@@ -45,7 +44,6 @@ if (q.trim()) {
         </section>
       ) : (
         <section>
-          <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
           <h1 class="clone-title">搜索：{q}</h1>
           <div class="clone-more"><a href="/search">返回搜索词&gt;&gt;</a></div>
           {error && <p class="w-full text-sm text-red-600">搜索失败：{error}</p>}

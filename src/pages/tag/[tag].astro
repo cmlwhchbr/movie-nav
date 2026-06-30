@@ -23,7 +23,6 @@ const items = await listCatalogVideos(runtime, { tag, order: "latest", limit, of
   <body>
     <Header siteName={siteName} />
     <main class="main-offset page">
-      <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
       <h1 class="clone-title">{tag}:</h1>
       <div class="clone-more"><a href="/tags">全部关键词&gt;&gt;</a></div>
       <VideoGrid items={items} />

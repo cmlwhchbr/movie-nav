@@ -23,7 +23,6 @@ const items = await listCatalogVideos(runtime, { actor: name, order: "latest", l
   <body>
     <Header siteName={siteName} />
     <main class="main-offset page">
-      <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
       <h1 class="clone-title">{name}:</h1>
       <VideoGrid items={items} />
       <div class="mt-7 flex justify-center gap-3">

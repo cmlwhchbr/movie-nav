@@ -27,7 +27,6 @@ const related = await relatedCatalogVideos(runtime, vod, 8);
   <body>
     <Header siteName={siteName} />
     <main class="main-offset page">
-      <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
       <h1 class="view-title">{vod.name}</h1>
       <section class="mt-6 grid gap-5 lg:grid-cols-[minmax(320px,520px)_1fr]">
         <img class="aspect-video w-full object-cover shadow-md shadow-black/30" src={vod.pic || "/favicon.svg"} alt={vod.name} />

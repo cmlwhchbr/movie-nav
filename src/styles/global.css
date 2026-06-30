@@ -209,16 +209,6 @@
   35%, 100% { opacity: 0; }
 }
 
-.clone-arrow {
-  padding: 10px 0;
-}
-
-.clone-arrow img {
-  width: 47px;
-  height: 26px;
-  margin: 0 auto;
-}
-
 .clone-title {
   margin: 0;
   padding-top: 32px;

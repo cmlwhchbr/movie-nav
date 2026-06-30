@@ -22,7 +22,6 @@ const actresses = await listActresses(runtime, { limit, offset, scanLimit: Math.
   <body>
     <Header siteName={siteName} />
     <main class="main-offset page">
-      <div class="clone-arrow"><img src="/clone-assets/fleche.png" alt="" /></div>
       <h1 class="clone-title">女优找片</h1>
       <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
         {actresses.map((item) => (

@@ -14,15 +14,32 @@ let japanKorea = [];
 let hot = [];
 let error = "";
 const hotSearchTerms = ["国产主播", "黑料吃瓜", "抖阴短片", "91探花", "学生少女", "高潮喷水", "麻豆", "果冻"];
+const homeCacheKey = "home:v3";
+const homeCacheTtl = 600;
 
 try {
-  [latest, domestic, gossip, japanKorea, hot] = await Promise.all([
-    listCatalogVideos(runtime, { order: "latest", limit: 18 }),
-    listCatalogVideos(runtime, { type: "国产", order: "latest", limit: 9 }),
-    listCatalogVideos(runtime, { tag: "黑料", order: "latest", limit: 9 }),
-    listCatalogVideos(runtime, { type: "日韩", order: "latest", limit: 9 }),
-    listCatalogVideos(runtime, { type: "国产", order: "hot", limit: 9 })
-  ]);
+  const cached = await runtime.TOP_CACHE.get(homeCacheKey, "json") as {
+    latest: typeof latest;
+    domestic: typeof domestic;
+    gossip: typeof gossip;
+    japanKorea: typeof japanKorea;
+    hot: typeof hot;
+  } | null;
+
+  if (cached) {
+    ({ latest, domestic, gossip, japanKorea, hot } = cached);
+  } else {
+    [latest, domestic, gossip, japanKorea, hot] = await Promise.all([
+      listCatalogVideos(runtime, { order: "latest", limit: 18 }),
+      listCatalogVideos(runtime, { type: "国产", order: "latest", limit: 9 }),
+      listCatalogVideos(runtime, { tag: "黑料", order: "latest", limit: 9 }),
+      listCatalogVideos(runtime, { type: "日韩", order: "latest", limit: 9 }),
+      listCatalogVideos(runtime, { type: "国产", order: "hot", limit: 9 })
+    ]);
+    await runtime.TOP_CACHE.put(homeCacheKey, JSON.stringify({ latest, domestic, gossip, japanKorea, hot }), {
+      expirationTtl: homeCacheTtl
+    });
+  }
 } catch (exception) {
   error = exception instanceof Error ? exception.message : "数据读取失败";
 }

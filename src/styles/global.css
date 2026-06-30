@@ -65,11 +65,32 @@
 .site-header__brand {
   flex: 0 0 auto;
   display: block;
+  min-width: 220px;
+  line-height: 1;
 }
 
-.site-header__brand img {
-  width: 230px;
-  height: auto;
+.brand-art {
+  display: block;
+  color: #fff;
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  line-height: 1;
+  text-shadow: 0 0 4px #000, 0 0 14px rgba(244, 114, 182, 0.8);
+}
+
+.brand-art::first-letter {
+  color: #fb7185;
+}
+
+.brand-tagline {
+  display: block;
+  margin-top: 4px;
+  color: #f9a8d4;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-shadow: 0 0 4px #000;
 }
 
 .site-header__nav {
@@ -435,8 +456,18 @@
     padding: 6px 10px;
   }
 
-  .site-header__brand img {
-    width: 220px;
+  .site-header__brand {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .brand-art {
+    font-size: 32px;
+  }
+
+  .brand-tagline {
+    font-size: 12px;
+    letter-spacing: 0.28em;
   }
 
   .site-header__nav {
@@ -446,6 +477,9 @@
   }
 
   .quick-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-x: visible;
     padding: 0 10px 1px;
     font-size: 13px;
   }
@@ -475,8 +509,13 @@
 }
 
 @media (max-width: 520px) {
-  .site-header__brand img {
-    width: 190px;
+  .brand-art {
+    font-size: 29px;
+  }
+
+  .brand-tagline {
+    font-size: 11px;
+    letter-spacing: 0.2em;
   }
 
   .site-header__nav {
